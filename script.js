@@ -1,7 +1,8 @@
-// Google Apps Script 웹앱 URL (source 파라미터는 여기서 붙여도 되고, 나중에 바꿔도 됨)
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKO8RmSp-95Tkv0oOSL66cieGTK4Iw5m0CIlfHqyxueQljPZqOj4KSvzsXcuF4cl0UfA/exec"; // 실제 URL로 교체
+// Google Apps Script 웹앱 URL
+// 예: https://script.google.com/macros/s/XXXX/exec?source=all
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/XXXX/exec?source=all"; // 실제 URL로 교체
 
-let rawItems = [];      // 시트에서 받은 원본
+let rawItems = [];      // 시트에서 받은 원본 데이터
 let combinedItems = []; // 통합/정렬 결과
 
 // "1,307만", "7억 3,316만" → 숫자로 변환
@@ -18,6 +19,7 @@ function parseViews(text) {
   if (eokMatch) eok = parseInt(eokMatch[1], 10);
   if (manMatch) man = parseInt(manMatch[1], 10);
 
+  // "12345"처럼 그냥 숫자만 있을 때
   if (!eokMatch && !manMatch) {
     const numMatch = t.match(/\d+/);
     return numMatch ? parseInt(numMatch[0], 10) : 0;
@@ -43,26 +45,36 @@ function rankToScore(rank) {
 // 통합 랭킹 계산: score 우선, 동점이면 조회수 큰 순
 function buildCombinedRanking(items) {
   const enriched = items.map((it) => {
-    const platform = String(it["출처"] || "").toLowerCase();
+    const platformRaw = String(it["출처"] || "").trim();
+    let platform = platformRaw.toLowerCase();
+
+    // 시트 값이 "네이버", "카카오페이지" 같은 한글일 경우 매핑
+    if (platform === "네이버") platform = "naver";
+    if (platform === "카카오" || platform === "카카오페이지") platform = "kakao";
+
     const platformRank = normalizeRank(it["순위"]);
+
     return {
       ...it,
-      _platform: platform,
-      _platformRank: platformRank,
+      _platform: platform,           // "naver" 또는 "kakao"
+      _platformRank: platformRank,   // 숫자 순위
       _score: rankToScore(platformRank),
       _viewsNum: parseViews(it["조회수"]),
     };
   });
 
+  // 1순위: score 내림차순, 2순위: 조회수 내림차순
   enriched.sort((a, b) => {
     if (b._score !== a._score) return b._score - a._score;
     return b._viewsNum - a._viewsNum;
   });
 
+  // 통합 순위 부여
   enriched.forEach((it, idx) => {
     it._combinedRank = idx + 1;
   });
 
+  // TOP 40까지만 사용
   return enriched.slice(0, 40);
 }
 
@@ -86,7 +98,7 @@ function createCard(item) {
   const div = document.createElement("div");
   div.className = "card";
 
-  const platform = item._platform === "naver" ? "네이버" : "카카오";
+  const platformLabel = item._platform === "naver" ? "네이버" : "카카오";
   const platformBadgeClass =
     item._platform === "naver" ? "badge-platform-naver" : "badge-platform-kakao";
 
@@ -102,19 +114,18 @@ function createCard(item) {
       <div class="card-title">${item["제목"]}</div>
       <div class="card-author">${item["작가"]}</div>
       <div class="card-meta">
-        <span class="badge ${platformBadgeClass}">${platform}</span>
+        <span class="badge ${platformBadgeClass}">${platformLabel}</span>
         <span class="badge">${item["장르"] || "장르 미상"}</span>
         <span class="badge">${item["날짜"] || ""}</span>
       </div>
       <div class="card-footer">
-        ${platform} ${item["순위"]} · 조회수 ${item["조회수"] || "-"}
+        ${platformLabel} ${item["순위"]} · 조회수 ${item["조회수"] || "-"}
       </div>
     </div>
   `;
 
   return div;
 }
-
 
 function renderCards(filter) {
   const grid = document.getElementById("card-grid");

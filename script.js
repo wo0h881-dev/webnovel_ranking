@@ -90,7 +90,7 @@ function createCard(item) {
   const platformBadgeClass =
     item._platform === "naver" ? "badge-platform-naver" : "badge-platform-kakao";
 
-  const thumbUrl = item["썸네일"];
+  const thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
   const thumbHtml = thumbUrl
     ? `<img src="${thumbUrl}" alt="">`
     : `<span>썸네일 없음</span>`;
@@ -114,6 +114,7 @@ function createCard(item) {
 
   return div;
 }
+
 
 function renderCards(filter) {
   const grid = document.getElementById("card-grid");

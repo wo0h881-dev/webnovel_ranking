@@ -1,0 +1,162 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", system-ui, sans-serif;
+  background-color: #0a0a0a;
+  color: #f9fafb;
+}
+
+.wrap {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+.tabs {
+  display: inline-flex;
+  background: #111827;
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.tab {
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.tab.active {
+  background: #facc15;
+  color: #111827;
+  font-weight: 600;
+}
+
+.status {
+  font-size: 14px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+}
+
+/* 카드 그리드 */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: #111827;
+  border-radius: 12px;
+  padding: 12px 12px 14px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+/* 통합 순위 배지 */
+
+.card-rank {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: #facc15;
+}
+
+/* 썸네일 영역 (있으면 이미지, 없으면 색박스) */
+
+.card-thumb {
+  width: 60px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1f2937;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 텍스트 파트 */
+
+.card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.card-author {
+  font-size: 13px;
+  color: #d1d5db;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.badge {
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: #1f2937;
+  color: #9ca3af;
+}
+
+.badge-platform-naver {
+  background: rgba(52, 211, 153, 0.1);
+  color: #6ee7b7;
+}
+
+.badge-platform-kakao {
+  background: rgba(250, 204, 21, 0.12);
+  color: #facc15;
+}
+
+.card-footer {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6b7280;
+}

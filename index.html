@@ -1,0 +1,47 @@
+def render_html(combined_items):
+    # 아주 심플한 예시
+    rows_html = ""
+    for item in combined_items:
+        rows_html += f"""
+        <div class="card">
+            <div class="rank">{item['combined_rank']}</div>
+            <div class="platform">{item['platform'].upper()}</div>
+            <div class="title">{item['title']}</div>
+            <div class="author">{item['author']}</div>
+            <div class="views">{item['views']}</div>
+            <div class="original-rank">{item['platform']} {item['rank']}위</div>
+        </div>
+        """
+
+    html = f"""
+    <!doctype html>
+    <html lang="ko">
+    <head>
+      <meta charset="utf-8" />
+      <title>통합 웹소설 TOP 40</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <style>
+        /* 카카오 느낌 나는 카드형 레이아웃을 나중에 여기서 다듬으면 됨 */
+        body {{ font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif; background:#111; color:#fff; }}
+        .wrap {{ max-width: 960px; margin: 0 auto; padding: 24px; }}
+        .grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }}
+        .card {{ background:#1c1c1c; border-radius:12px; padding:16px; }}
+        .rank {{ font-size:24px; font-weight:bold; color:#ffd400; }}
+        .platform {{ font-size:12px; opacity:0.8; margin-bottom:4px; }}
+        .title {{ font-size:16px; font-weight:bold; margin-bottom:4px; }}
+        .author {{ font-size:14px; opacity:0.9; margin-bottom:4px; }}
+        .views {{ font-size:13px; opacity:0.8; }}
+        .original-rank {{ font-size:12px; opacity:0.6; margin-top:4px; }}
+      </style>
+    </head>
+    <body>
+      <div class="wrap">
+        <h1>통합 웹소설 TOP 40</h1>
+        <div class="grid">
+          {rows_html}
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+    return html

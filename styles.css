@@ -383,18 +383,17 @@ h1 {
 }
 
 /* 도넛과 텍스트 배치 */
+/* genre-chart-row canvas 를 직접 지정하는 것보다 부모에서 제어 */
 .genre-chart-row {
   display: flex;
   gap: 16px;
   align-items: center;
+  justify-content: center;
 }
 
-/* 도넛 하나 영역 */
 .genre-chart-row > div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  width: 45%; /* 부모 너비의 절반 정도로 설정 */
+  max-width: 200px;
 }
 
 /* 도넛 실제 표시 크기 */

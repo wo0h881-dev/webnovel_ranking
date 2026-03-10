@@ -258,6 +258,8 @@ h1 {
   color: #9ca3af;
 }
 
+/* 히든 레이어 영역 */
+
 .detail-layer.hidden { display: none; }
 .detail-layer {
   position: fixed;

@@ -257,3 +257,5 @@ h1 {
   font-size: 11px;
   color: #9ca3af;
 }
+
+.hidden { display:none; }

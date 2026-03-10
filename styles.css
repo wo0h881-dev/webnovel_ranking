@@ -401,3 +401,33 @@ h1 {
   height: 160px;
 }
 
+/* 뷰 토글 */
+.daily-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.daily-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.daily-view-toggle {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.daily-view {
+  display: none;
+}
+
+.daily-view.active {
+  display: block;
+}

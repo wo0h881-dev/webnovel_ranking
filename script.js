@@ -28,13 +28,6 @@ function parseViews(text) {
   return eok * 100_000_000 + man * 10_000;
 }
 
-// "1위" → 1
-function normalizeRank(rankStr) {
-  if (!rankStr) return 0;
-  const m = String(rankStr).match(/\d+/);
-  return m ? parseInt(m[0], 10) : 0;
-}
-
 // 1위 → 20점, 20위 → 1점
 function rankToScore(rank) {
   rank = Number(rank);
@@ -43,23 +36,26 @@ function rankToScore(rank) {
 }
 
 // 통합 랭킹 계산: score 우선, 동점이면 조회수 큰 순
+// Apps Script 통합 시트 헤더 기준:
+// ["출처","오늘순위","제목","작가","날짜","장르","오늘조회수",
+//  "전일순위","전일조회수","순위변화","조회수증감","조회수증감률","썸네일"]
 function buildCombinedRanking(items) {
   const enriched = items.map((it) => {
     const platformRaw = String(it["출처"] || "").trim();
     let platform = platformRaw.toLowerCase();
 
-    // 시트 값이 "네이버", "카카오페이지" 같은 한글일 경우 매핑
+    // 시트 값이 "네이버", "카카오" 같은 한글일 경우 매핑
     if (platform === "네이버") platform = "naver";
     if (platform === "카카오" || platform === "카카오페이지") platform = "kakao";
 
-    const platformRank = normalizeRank(it["순위"]);
+    const platformRank = Number(it["오늘순위"] || 0);
 
     return {
       ...it,
-      _platform: platform,           // "naver" 또는 "kakao"
-      _platformRank: platformRank,   // 숫자 순위
+      _platform: platform,                 // "naver" 또는 "kakao"
+      _platformRank: platformRank,         // 오늘 순위 (숫자)
       _score: rankToScore(platformRank),
-      _viewsNum: parseViews(it["조회수"]),
+      _viewsNum: parseViews(it["오늘조회수"]), // 오늘 조회수 숫자
     };
   });
 
@@ -107,6 +103,14 @@ function createCard(item) {
     ? `<img src="${thumbUrl}" alt="">`
     : `<span>썸네일 없음</span>`;
 
+  const todayRank = item["오늘순위"] ?? "";
+  const prevRank = item["전일순위"] ?? "";
+  const rankDiff = item["순위변화"] || "-";
+  const todayViews = item["오늘조회수"] || "-";
+  const prevViews = item["전일조회수"] || "-";
+  const viewDiff = item["조회수증감"] || "";
+  const viewRate = item["조회수증감률"] || "";
+
   div.innerHTML = `
     <div class="card-rank">${item._combinedRank}</div>
     <div class="card-thumb">${thumbHtml}</div>
@@ -119,7 +123,10 @@ function createCard(item) {
         <span class="badge">${item["날짜"] || ""}</span>
       </div>
       <div class="card-footer">
-        ${platformLabel} ${item["순위"]} · 조회수 ${item["조회수"] || "-"}
+        ${platformLabel} 오늘 ${todayRank}위
+        ${prevRank ? `(전일 ${prevRank}위, ${rankDiff})` : ""}
+        · 조회수 ${todayViews}
+        ${viewDiff || viewRate ? ` (전일 ${prevViews}, ${viewDiff} / ${viewRate})` : ""}
       </div>
     </div>
   `;

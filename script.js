@@ -74,27 +74,54 @@ function buildCombinedRanking(items) {
   return enriched.slice(0, 40);
 }
 
-// 상단: 일별 웹소설 박스오피스 TOP10용 데이터
+// 상단: 네이버/카카오별 1~20위 재계산 후 TOP10
 function buildDailyTop10(items) {
   const sourceFilterEl = document.getElementById("source-filter");
   const sourceFilter = sourceFilterEl ? sourceFilterEl.value : "all"; // all/naver/kakao
 
-  let list = items.slice(); // rawItems 그대로 사용
+  // 1) 통합 데이터에서 네이버/카카오별로 분리
+  const naverList = [];
+  const kakaoList = [];
 
-  if (sourceFilter === "naver" || sourceFilter === "kakao") {
-    list = list.filter((it) => {
-      const src = String(it["출처"] || "").toLowerCase();
-      if (sourceFilter === "naver") {
-        return src.indexOf("naver") !== -1 || src.indexOf("네이버") !== -1;
-      } else {
-        return src.indexOf("kakao") !== -1 || src.indexOf("카카오") !== -1;
-      }
-    });
+  items.forEach((it) => {
+    const src = String(it["출처"] || "").toLowerCase();
+    const todayRank = Number(it["오늘순위"] || 0);
+    if (!todayRank) return;
+
+    if (src.indexOf("naver") !== -1 || src.indexOf("네이버") !== -1) {
+      naverList.push(it);
+    } else if (src.indexOf("kakao") !== -1 || src.indexOf("카카오") !== -1) {
+      kakaoList.push(it);
+    }
+  });
+
+  // 2) 각 플랫폼 안에서 오늘순위 기준 정렬 후 1~20위 재부여
+  function sortAndReRank(list) {
+    list.sort((a, b) => Number(a["오늘순위"] || 0) - Number(b["오늘순위"] || 0));
+    return list.slice(0, 20).map((it, idx) => ({
+      ...it,
+      _localRank: idx + 1, // 플랫폼별 1~20위
+    }));
   }
 
-  // 오늘순위 기준 정렬 후 TOP10
-  list.sort((a, b) => Number(a["오늘순위"] || 0) - Number(b["오늘순위"] || 0));
-  return list.slice(0, 10);
+  const naverRanked = sortAndReRank(naverList);
+  const kakaoRanked = sortAndReRank(kakaoList);
+
+  // 3) 필터에 따라 보여줄 리스트 선택
+  let merged;
+  if (sourceFilter === "naver") {
+    merged = naverRanked;
+  } else if (sourceFilter === "kakao") {
+    merged = kakaoRanked;
+  } else {
+    merged = [...naverRanked, ...kakaoRanked];
+  }
+
+  // 네이버/카카오 섞어서 보여줄 때는 _localRank 기준으로 다시 정렬
+  merged.sort((a, b) => (a._localRank || 0) - (b._localRank || 0));
+
+  // TOP10만 사용
+  return merged.slice(0, 10);
 }
 
 // 상단: 일별 박스오피스 테이블 렌더링
@@ -108,23 +135,31 @@ function renderDailyTable() {
   top10.forEach((item) => {
     const tr = document.createElement("tr");
     const platformRaw = String(item["출처"] || "").trim();
-    const platformLabel =
-      platformRaw.toLowerCase().indexOf("naver") !== -1 || platformRaw.indexOf("네이버") !== -1
-        ? "네이버"
-        : "카카오";
+    const isNaver =
+      platformRaw.toLowerCase().indexOf("naver") !== -1 ||
+      platformRaw.indexOf("네이버") !== -1;
+    const platformLabel = isNaver ? "네이버" : "카카오";
 
-    const todayRank = item["오늘순위"] ?? "";
+    const todayRank = item._localRank ?? item["오늘순위"] ?? "";
     const prevRank = item["전일순위"] ?? "";
     const rankDiff = item["순위변화"] || "-";
     const todayViews = item["오늘조회수"] || "-";
     const viewDiff = item["조회수증감"] || "";
     const viewRate = item["조회수증감률"] || "";
 
+    const thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
+    const thumbHtml = thumbUrl
+      ? `<img src="${thumbUrl}" alt="" class="daily-thumb-img">`
+      : `<span class="daily-thumb-placeholder">No</span>`;
+
+    const platformClass = isNaver ? "badge-platform-naver" : "badge-platform-kakao";
+
     tr.innerHTML = `
+      <td class="daily-thumb-cell">${thumbHtml}</td>
       <td>${todayRank}</td>
       <td>${item["제목"]}</td>
       <td>${item["작가"]}</td>
-      <td>${platformLabel}</td>
+      <td><span class="badge ${platformClass}">${platformLabel}</span></td>
       <td>${todayViews}</td>
       <td>${prevRank || "-"}</td>
       <td>${rankDiff}</td>

@@ -1,7 +1,7 @@
 // =======================
 // 설정
 // =======================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuDzAA3z1R4GwEj2M6lTu1uygGEtHYEj_GQ1f0NSJhTUaYiqgJOgRpYfpYRlrphIMOLQ/exec"; // 배포된 Apps Script 웹앱 URL
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnzZKeVdI8_-4b7p3VnrAy_oiFb0FJ1-wamxKkmG4PIi0ktlmK_HDCEBp7Ab1r_21lQQ/exec"; // 배포된 Apps Script 웹앱 URL
 
 // 통합 / 네이버 / 카카오 데이터
 let totalItems = [];   // 통합 시트 (통합용)
@@ -490,6 +490,70 @@ function setupDailyControls() {
   }
 }
 
+// =======================
+// 장르·플랫폼 비율 도넛
+// =======================
+
+// genreSummary API에서 데이터 가져오기
+async function loadGenrePlatformShare() {
+  try {
+    const params = new URLSearchParams({ action: "genreSummary" });
+    const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+    const data = await res.json(); // [{platform, genre, countShare, viewShare, ...}, ...]
+
+    const kakao = data.filter(d => d.platform === "kakao");
+    const naver = data.filter(d => d.platform === "naver");
+
+    renderGenreDonut("chart-genre-kakao", kakao);
+    renderGenreDonut("chart-genre-naver", naver);
+  } catch (e) {
+    console.error("장르·플랫폼 비율 로드 실패", e);
+  }
+}
+
+// 실제 도넛 차트 그리는 함수
+function renderGenreDonut(canvasId, rows) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas || !rows || rows.length === 0) return;
+
+  const ctx = canvas.getContext("2d");
+
+  const labels = rows.map(r => r.genre);
+  const values = rows.map(r => r.countShare); // 작품수 비율 기준. 조회수 비율 쓰고 싶으면 r.viewShare
+
+  new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels,
+      datasets: [
+        {
+          data: values,
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: "right"
+        },
+        title: {
+          display: true,
+          text: "장르 비율(작품수 기준)"
+        },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const label = ctx.label || "";
+              const value = ctx.parsed;
+              return `${label}: ${value}%`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 // 데이터 fetch
 async function fetchData() {
   const statusEl = document.getElementById("status");
@@ -527,4 +591,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDailyControls();
   setupDetailLayer();
   fetchData();
+  loadGenrePlatformShare();   // ← 이 줄 추가
 });

@@ -554,6 +554,31 @@ function renderGenreDonut(canvasId, rows) {
   });
 }
 
+// 박스오피스 뷰 전환 (테이블 <-> 차트)
+function setupDailyViewToggle() {
+  const btn = document.getElementById("daily-view-toggle");
+  const viewTable = document.getElementById("daily-view-table");
+  const viewChart = document.getElementById("daily-view-chart");
+  if (!btn || !viewTable || !viewChart) return;
+
+  let isTableView = true; // 초기: 테이블
+
+  btn.addEventListener("click", () => {
+    isTableView = !isTableView;
+
+    if (isTableView) {
+      viewTable.classList.add("active");
+      viewChart.classList.remove("active");
+      btn.textContent = "▶"; // 차트로
+    } else {
+      viewTable.classList.remove("active");
+      viewChart.classList.add("active");
+      btn.textContent = "◀"; // 테이블로
+    }
+  });
+}
+
+
 // 데이터 fetch
 async function fetchData() {
   const statusEl = document.getElementById("status");
@@ -591,5 +616,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupDailyControls();
   setupDetailLayer();
   fetchData();
-  loadGenrePlatformShare();   // ← 이 줄 추가
+  loadGenrePlatformShare();   // 이미 있으면 그대로 두기
+  setupDailyViewToggle();     // ← 이 줄 추가
 });

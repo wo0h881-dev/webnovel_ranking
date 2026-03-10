@@ -1,6 +1,6 @@
 // Google Apps Script 웹앱 URL
 // 예: https://script.google.com/macros/s/XXXX/exec?source=all
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzloPWSRC8iU5ZrdFfdX5z-3HAOd9S9Pm1KB51-ExXHlfAR0YizSERsrT0nf5ISoaEdOg/exec"; // 실제 URL로 교체
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwtoZ3BGnAwYRSlpLxhmtqZ5XLq2e43quRxcELdPH3wCv2ZZRjPr0905-Zmxgili5hgLw/exec"; // 실제 URL로 교체
 
 let rawItems = [];      // 시트에서 받은 원본 데이터
 let combinedItems = []; // 통합/정렬 결과

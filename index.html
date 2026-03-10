@@ -1,27 +1,56 @@
-<section class="section-daily-boxoffice">
-  <h2>일별 웹소설 박스오피스 TOP 10</h2>
-  <div class="toolbar">
-    <!-- 날짜 필터는 아직 기능 안 쓰니, 당장은 빼도 됨 -->
-    <!-- <input type="date" id="date-picker" /> -->
-    <select id="source-filter">
-      <option value="all">전체</option>
-      <option value="naver">네이버</option>
-      <option value="kakao">카카오</option>
-    </select>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>통합 웹소설 TOP 40</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>통합 웹소설 TOP 40</h1>
+    <p class="subtitle">네이버 시리즈 · 카카오페이지 일간 TOP 20 통합 랭킹</p>
+
+    <!-- 상단: 일별 웹소설 박스오피스 -->
+    <section class="section-daily-boxoffice">
+      <h2>일별 웹소설 박스오피스 TOP 10</h2>
+      <div class="toolbar">
+        <select id="source-filter">
+          <option value="all">전체</option>
+          <option value="naver">네이버</option>
+          <option value="kakao">카카오</option>
+        </select>
+      </div>
+      <table class="daily-table">
+        <thead>
+          <tr>
+            <th>순위</th>
+            <th>제목</th>
+            <th>작가</th>
+            <th>플랫폼</th>
+            <th>오늘 조회수</th>
+            <th>전일 순위</th>
+            <th>순위 변화</th>
+            <th>전일 대비</th>
+          </tr>
+        </thead>
+        <tbody id="daily-tbody"></tbody>
+      </table>
+    </section>
+
+    <!-- 하단: 통합 TOP 40 카드 -->
+    <section class="section-cards">
+      <div class="tabs">
+        <button class="tab active" data-filter="all">통합</button>
+        <button class="tab" data-filter="naver">네이버</button>
+        <button class="tab" data-filter="kakao">카카오</button>
+      </div>
+
+      <div id="status" class="status"></div>
+      <div id="card-grid" class="card-grid"></div>
+    </section>
   </div>
-  <table class="daily-table">
-    <thead>
-      <tr>
-        <th>순위</th>
-        <th>제목</th>
-        <th>작가</th>
-        <th>플랫폼</th>
-        <th>오늘 조회수</th>
-        <th>전일 순위</th>
-        <th>순위 변화</th>
-        <th>전일 대비</th>
-      </tr>
-    </thead>
-    <tbody id="daily-tbody"></tbody>
-  </table>
-</section>
+
+  <script src="script.js"></script>
+</body>
+</html>

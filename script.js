@@ -164,7 +164,7 @@ function renderDailyTable() {
       todayRank = item._localRank ?? item["순위"] ?? "";
       prevRank = "-"; // 원본 시트에는 전일 데이터 없음
       rankDiff = "-";
-      todayViews = item["오늘조회수"] || "-";
+      todayViews = item["조회수"] || "-";
       viewDiff = "";
       viewRate = "";
       thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
@@ -233,7 +233,7 @@ function createCard(item, rank) {
   const todayRank = item._platformRank ?? item["오늘순위"] ?? "";
   const prevRank = item["전일순위"] ?? "";
   const rankDiff = item["순위변화"] || "-";
-  const todayViews = item["오늘조회수"] || "-";
+  const todayViews = item["조회수"] || "-";
   const prevViews = item["전일조회수"] || "-";
   const viewDiff = item["조회수증감"] || "";
   const viewRate = item["조회수증감률"] || "";

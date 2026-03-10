@@ -431,3 +431,18 @@ h1 {
 .daily-view.active {
   display: block;
 }
+
+/* 수정 */
+.daily-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.daily-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+

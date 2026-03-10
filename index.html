@@ -1,7 +1,8 @@
 <section class="section-daily-boxoffice">
   <h2>일별 웹소설 박스오피스 TOP 10</h2>
   <div class="toolbar">
-    <input type="date" id="date-picker" />
+    <!-- 날짜 필터는 아직 기능 안 쓰니, 당장은 빼도 됨 -->
+    <!-- <input type="date" id="date-picker" /> -->
     <select id="source-filter">
       <option value="all">전체</option>
       <option value="naver">네이버</option>
@@ -24,62 +25,3 @@
     <tbody id="daily-tbody"></tbody>
   </table>
 </section>
-.section-daily-boxoffice {
-  margin-bottom: 24px;
-  padding: 16px 20px;
-  background: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
-}
-
-.section-daily-boxoffice h2 {
-  margin: 0 0 12px;
-  font-size: 20px;
-}
-
-.section-daily-boxoffice .toolbar {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.section-daily-boxoffice select,
-.section-daily-boxoffice input[type="date"] {
-  padding: 4px 8px;
-  font-size: 14px;
-}
-
-.daily-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.daily-table thead tr {
-  background: #f5f5f5;
-}
-
-.daily-table th,
-.daily-table td {
-  padding: 6px 8px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-
-.daily-table th:nth-child(1),
-.daily-table td:nth-child(1),
-.daily-table th:nth-child(4),
-.daily-table td:nth-child(4) {
-  text-align: center;
-  width: 60px;
-}
-
-.daily-table th:nth-child(5),
-.daily-table td:nth-child(5),
-.daily-table th:nth-child(7),
-.daily-table td:nth-child(7),
-.daily-table th:nth-child(8),
-.daily-table td:nth-child(8) {
-  text-align: right;
-}

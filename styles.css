@@ -373,21 +373,23 @@ h1 {
   text-decoration: underline;
 }
 
-/* 장르 도넛 섹션 */
+/* 장르 도넛 섹션 카드 */
 .genre-chart-wrap {
-  margin-bottom: 24px;
+  margin-top: 8px;
   padding: 16px 20px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
 }
 
+/* 도넛과 텍스트 배치 */
 .genre-chart-row {
   display: flex;
   gap: 16px;
   align-items: center;
 }
 
+/* 도넛 하나 영역 */
 .genre-chart-row > div {
   display: flex;
   flex-direction: column;
@@ -395,11 +397,12 @@ h1 {
   gap: 8px;
 }
 
-/* 도넛 실제 표시 크기 줄이기 */
+/* 도넛 실제 표시 크기 */
 .genre-chart-row canvas {
-  width: 160px;
-  height: 160px;
+  width: 120px;
+  height: 120px;
 }
+
 
 /* 뷰 토글 */
 .daily-header {

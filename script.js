@@ -376,13 +376,13 @@ async function openDetailLayer({ title, author, platform }) {
   const titleEl = document.getElementById("detail-title");
   const metaEl = document.getElementById("detail-meta");
 
-const platformClass =
-  platform === "네이버" ? "detail-platform--naver" : "detail-platform--kakao";
+  const platformClass =
+    platform === "네이버" ? "detail-platform--naver" : "detail-platform--kakao";
 
-titleEl.innerHTML = `
-  <span class="detail-title-text">${title}</span>
-  <span class="detail-platform-badge ${platformClass}">${platform}</span>
-`;
+  titleEl.innerHTML = `
+    <span class="detail-title-text">${title}</span>
+    <span class="detail-platform-badge ${platformClass}">${platform}</span>
+  `;
 
   metaEl.innerHTML = `
     <div><strong>작가</strong> : ${author || "-"}</div>

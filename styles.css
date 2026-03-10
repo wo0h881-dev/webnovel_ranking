@@ -6,21 +6,19 @@ body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", system-ui, sans-serif;
-  background-color: #0a0a0a;
-  color: #f9fafb;
+  background-color: #f3f4f6; /* 연한 회색 배경 */
+  color: #111827;
 }
 
-.wrap {
+/* 레이아웃 래퍼 */
+
+.container {
   max-width: 1024px;
   margin: 0 auto;
   padding: 24px 16px 48px;
 }
 
-.header {
-  margin-bottom: 24px;
-}
-
-.title {
+h1 {
   margin: 0 0 8px;
   font-size: 24px;
   font-weight: 700;
@@ -29,20 +27,135 @@ body {
 .subtitle {
   margin: 0 0 16px;
   font-size: 14px;
-  color: #9ca3af;
+  color: #6b7280;
 }
+
+/* 상단: 일별 박스오피스 섹션 */
+
+.section-daily-boxoffice {
+  margin-bottom: 24px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.section-daily-boxoffice h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.section-daily-boxoffice .toolbar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.section-daily-boxoffice select {
+  padding: 4px 8px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #111827;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+/* 테이블 스타일 */
+
+.daily-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.daily-table thead tr {
+  background: #f9fafb;
+}
+
+.daily-table th,
+.daily-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center; /* 기본 가운데 정렬 */
+}
+
+.daily-table th {
+  font-weight: 600;
+  color: #374151;
+}
+
+.daily-table td {
+  color: #4b5563;
+}
+
+.daily-table th:nth-child(3),
+.daily-table td:nth-child(3),
+.daily-table th:nth-child(4),
+.daily-table td:nth-child(4) {
+  text-align: left; /* 제목/작가만 좌측 정렬 */
+}
+
+/* 썸네일 셀 */
+
+.daily-thumb-cell {
+  width: 56px;
+}
+
+.daily-thumb-img {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e5e7eb;
+}
+
+.daily-thumb-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 64px;
+  border-radius: 4px;
+  background: #f3f4f6;
+  color: #9ca3af;
+  font-size: 10px;
+}
+
+/* 플랫폼 배지 (카카오페이지/네이버 느낌) */
+
+.badge {
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+.badge-platform-naver {
+  background: #e0fbea;
+  color: #047857;
+}
+
+.badge-platform-kakao {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* 탭 (하단 카드 섹션) */
 
 .tabs {
   display: inline-flex;
-  background: #111827;
+  background: #e5e7eb;
   border-radius: 999px;
   padding: 4px;
+  margin-bottom: 12px;
 }
 
 .tab {
   border: none;
   background: transparent;
-  color: #9ca3af;
+  color: #6b7280;
   font-size: 13px;
   padding: 6px 14px;
   border-radius: 999px;
@@ -57,25 +170,26 @@ body {
 
 .status {
   font-size: 14px;
-  color: #9ca3af;
+  color: #6b7280;
   margin-bottom: 12px;
 }
 
-/* 카드 그리드 */
+/* 카드 그리드 (하단 통합 TOP40) */
 
-.grid {
+.card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
 }
 
 .card {
-  background: #111827;
+  background: #ffffff;
   border-radius: 12px;
   padding: 12px 12px 14px;
   display: flex;
   flex-direction: row;
   gap: 10px;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
 }
 
 /* 통합 순위 배지 */
@@ -85,23 +199,23 @@ body {
   text-align: center;
   font-weight: 700;
   font-size: 18px;
-  color: #facc15;
+  color: #f59e0b;
 }
 
-/* 썸네일 영역 (있으면 이미지, 없으면 색박스) */
+/* 썸네일 영역 */
 
 .card-thumb {
   width: 60px;
   height: 80px;
   border-radius: 8px;
   overflow: hidden;
-  background: #1f2937;
+  background: #f3f4f6;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 11px;
-  color: #6b7280;
+  color: #9ca3af;
 }
 
 .card-thumb img {
@@ -123,11 +237,12 @@ body {
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 2px;
+  color: #111827;
 }
 
 .card-author {
   font-size: 13px;
-  color: #d1d5db;
+  color: #6b7280;
 }
 
 .card-meta {
@@ -137,26 +252,8 @@ body {
   margin-top: 4px;
 }
 
-.badge {
-  font-size: 11px;
-  border-radius: 999px;
-  padding: 2px 8px;
-  background: #1f2937;
-  color: #9ca3af;
-}
-
-.badge-platform-naver {
-  background: rgba(52, 211, 153, 0.1);
-  color: #6ee7b7;
-}
-
-.badge-platform-kakao {
-  background: rgba(250, 204, 21, 0.12);
-  color: #facc15;
-}
-
 .card-footer {
   margin-top: 4px;
   font-size: 11px;
-  color: #6b7280;
+  color: #9ca3af;
 }

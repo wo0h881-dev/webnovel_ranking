@@ -74,6 +74,66 @@ function buildCombinedRanking(items) {
   return enriched.slice(0, 40);
 }
 
+// 상단: 일별 웹소설 박스오피스 TOP10용 데이터
+function buildDailyTop10(items) {
+  const sourceFilterEl = document.getElementById("source-filter");
+  const sourceFilter = sourceFilterEl ? sourceFilterEl.value : "all"; // all/naver/kakao
+
+  let list = items.slice(); // rawItems 그대로 사용
+
+  if (sourceFilter === "naver" || sourceFilter === "kakao") {
+    list = list.filter((it) => {
+      const src = String(it["출처"] || "").toLowerCase();
+      if (sourceFilter === "naver") {
+        return src.indexOf("naver") !== -1 || src.indexOf("네이버") !== -1;
+      } else {
+        return src.indexOf("kakao") !== -1 || src.indexOf("카카오") !== -1;
+      }
+    });
+  }
+
+  // 오늘순위 기준 정렬 후 TOP10
+  list.sort((a, b) => Number(a["오늘순위"] || 0) - Number(b["오늘순위"] || 0));
+  return list.slice(0, 10);
+}
+
+// 상단: 일별 박스오피스 테이블 렌더링
+function renderDailyTable() {
+  const tbody = document.getElementById("daily-tbody");
+  if (!tbody) return;
+
+  const top10 = buildDailyTop10(rawItems);
+  tbody.innerHTML = "";
+
+  top10.forEach((item) => {
+    const tr = document.createElement("tr");
+    const platformRaw = String(item["출처"] || "").trim();
+    const platformLabel =
+      platformRaw.toLowerCase().indexOf("naver") !== -1 || platformRaw.indexOf("네이버") !== -1
+        ? "네이버"
+        : "카카오";
+
+    const todayRank = item["오늘순위"] ?? "";
+    const prevRank = item["전일순위"] ?? "";
+    const rankDiff = item["순위변화"] || "-";
+    const todayViews = item["오늘조회수"] || "-";
+    const viewDiff = item["조회수증감"] || "";
+    const viewRate = item["조회수증감률"] || "";
+
+    tr.innerHTML = `
+      <td>${todayRank}</td>
+      <td>${item["제목"]}</td>
+      <td>${item["작가"]}</td>
+      <td>${platformLabel}</td>
+      <td>${todayViews}</td>
+      <td>${prevRank || "-"}</td>
+      <td>${rankDiff}</td>
+      <td>${viewDiff || viewRate ? `${viewDiff} ${viewRate}` : "-"}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
 async function fetchData() {
   const statusEl = document.getElementById("status");
   try {
@@ -81,6 +141,11 @@ async function fetchData() {
     const res = await fetch(APPS_SCRIPT_URL);
     const data = await res.json();
     rawItems = data;
+
+    // 상단 일별 박스오피스 테이블
+    renderDailyTable();
+
+    // 하단 통합 TOP40 카드
     combinedItems = buildCombinedRanking(rawItems);
     statusEl.textContent = "";
     renderCards("all");
@@ -134,6 +199,7 @@ function createCard(item) {
   return div;
 }
 
+// 하단 카드 렌더링 (통합 TOP40)
 function renderCards(filter) {
   const grid = document.getElementById("card-grid");
   grid.innerHTML = "";
@@ -160,7 +226,18 @@ function setupTabs() {
   });
 }
 
+// 상단 박스오피스 플랫폼 필터
+function setupDailyControls() {
+  const sourceSel = document.getElementById("source-filter");
+  if (sourceSel) {
+    sourceSel.addEventListener("change", () => {
+      renderDailyTable();
+    });
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   setupTabs();
+  setupDailyControls();
   fetchData();
 });

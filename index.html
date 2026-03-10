@@ -53,6 +53,40 @@
   </div>
 
   <script src="script.js"></script>
+
+  <!-- 상세 레이어(모달) -->
+<div id="detail-layer" class="detail-layer hidden">
+  <div class="detail-backdrop"></div>
+  <div class="detail-panel">
+    <div class="detail-header">
+      <h2 id="detail-title">작품 제목</h2>
+      <button id="detail-close" class="detail-close">×</button>
+    </div>
+
+    <!-- 탭 버튼 -->
+    <div class="detail-tabs">
+      <button class="detail-tab active" data-tab="info">기본정보</button>
+      <button class="detail-tab" data-tab="chart">히스토리 차트</button>
+      <button class="detail-tab" data-tab="memo">메모</button>
+    </div>
+
+    <!-- 탭 내용 -->
+    <div class="detail-contents">
+      <div class="detail-pane active" data-tab="info">
+        <div id="detail-meta"></div>
+      </div>
+
+      <div class="detail-pane" data-tab="chart">
+        <canvas id="detail-chart" height="200"></canvas>
+      </div>
+
+      <div class="detail-pane" data-tab="memo">
+        <textarea id="detail-memo" rows="6" style="width:100%;"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 

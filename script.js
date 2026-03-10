@@ -555,37 +555,44 @@ function renderGenreDonut(canvasId, rows) {
 }
 
 // 박스오피스 뷰 전환 (테이블 <-> 차트)
-let isChartRendered = false; // 차트가 이미 그려졌는지 확인하는 변수
+let isChartRendered = false;
 
-function setupDailyViewToggle() {
-  const btn = document.getElementById("daily-view-toggle");
+function setupNavigation() {
+  const prevBtn = document.getElementById("view-prev");
+  const nextBtn = document.getElementById("view-next");
+  const tableLink = document.getElementById("menu-table-link");
+  const chartLink = document.getElementById("menu-chart-link");
   const viewTable = document.getElementById("daily-view-table");
   const viewChart = document.getElementById("daily-view-chart");
-  
-  if (!btn || !viewTable || !viewChart) return;
 
-  let isTableView = true;
-
-  btn.addEventListener("click", () => {
-    isTableView = !isTableView;
-
-    if (isTableView) {
+  function switchTo(target) {
+    if (target === 'table') {
       viewTable.classList.add("active");
       viewChart.classList.remove("active");
-      btn.textContent = "▶";
+      tableLink.classList.add("active");
+      chartLink.classList.remove("active");
     } else {
       viewTable.classList.remove("active");
       viewChart.classList.add("active");
-      btn.textContent = "◀";
-      
-      // 차트 탭이 처음 열릴 때 렌더링
+      tableLink.classList.remove("active");
+      chartLink.classList.add("active");
       if (!isChartRendered) {
-        loadGenrePlatformShare();
+        loadGenrePlatformShare(); // 차트 데이터 로드 함수 호출
         isChartRendered = true;
       }
     }
-  });
+  }
+
+  prevBtn.addEventListener("click", () => switchTo('table'));
+  nextBtn.addEventListener("click", () => switchTo('chart'));
+  tableLink.addEventListener("click", (e) => { e.preventDefault(); switchTo('table'); });
+  chartLink.addEventListener("click", (e) => { e.preventDefault(); switchTo('chart'); });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  setupNavigation();
+  // fetchData() 등 기존 초기화 로직...
+});
 
 
 // 데이터 fetch

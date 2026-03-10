@@ -12,47 +12,48 @@
     <p class="subtitle">네이버 시리즈 · 카카오페이지 일간 TOP 20 통합 랭킹</p>
 
     <!-- 상단: 일별 웹소설 박스오피스 -->
-    <section class="section-daily-boxoffice">
-      <h2>일별 웹소설 박스오피스 TOP 10</h2>
-      <div class="toolbar">
-        <select id="source-filter">
-          <option value="all">전체</option>
-          <option value="naver">네이버</option>
-          <option value="kakao">카카오</option>
-        </select>
-      </div>
-      <table class="daily-table">
-        <thead>
-          <tr>
-            <th>썸네일</th>
-            <th>순위</th>
-            <th>제목</th>
-            <th>작가</th>
-            <th>플랫폼</th>
-            <th>오늘 조회수</th>
-            <th>전일 순위</th>
-            <th>순위 변화</th>
-            <th>전일 대비</th>
-          </tr>
-        </thead>
-        <tbody id="daily-tbody"></tbody>
-      </table>
-    </section>
-    
-<!-- 장르 도넛 섹션 추가 -->
-    <div class="genre-chart-wrap">
-  <h3>플랫폼별 장르 비율</h3>
-  <div class="genre-chart-row">
-    <div>
-      <h4>카카오</h4>
-      <canvas id="chart-genre-kakao" width="160" height="160"></canvas>
-    </div>
-    <div>
-      <h4>네이버</h4>
-      <canvas id="chart-genre-naver" width="160" height="160"></canvas>
+<section class="section-daily-boxoffice">
+  <div class="daily-header">
+    <h2>일별 웹소설 박스오피스 TOP 10</h2>
+    <div class="daily-controls">
+      <select id="source-filter">
+        <option value="all">전체</option>
+        <option value="naver">네이버</option>
+        <option value="kakao">카카오</option>
+      </select>
+
+      <!-- 뷰 전환 버튼 (KOBIS 화살표 느낌) -->
+      <button id="daily-view-toggle" class="daily-view-toggle">
+        ▶
+      </button>
     </div>
   </div>
-</div>
+
+  <!-- 뷰1: 테이블 -->
+  <div id="daily-view-table" class="daily-view active">
+    <table class="daily-table">
+      <thead>...</thead>
+      <tbody id="daily-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- 뷰2: 차트 (장르 도넛 등) -->
+  <div id="daily-view-chart" class="daily-view">
+    <div class="genre-chart-wrap">
+      <h3>플랫폼별 장르 비율</h3>
+      <div class="genre-chart-row">
+        <div>
+          <h4>카카오</h4>
+          <canvas id="chart-genre-kakao" width="160" height="160"></canvas>
+        </div>
+        <div>
+          <h4>네이버</h4>
+          <canvas id="chart-genre-naver" width="160" height="160"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
     <!-- 하단: 통합 TOP 40 카드 -->

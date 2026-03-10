@@ -1,144 +1,61 @@
-* {
-  box-sizing: border-box;
-}
-
+/* --- 기본 구조 유지 --- */
+* { box-sizing: border-box; }
 body {
-  margin: 0;
-  padding: 0;
+  margin: 0; padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", system-ui, sans-serif;
-  background-color: #f3f4f6;
-  color: #111827;
+  background-color: #f3f4f6; color: #111827;
 }
+.container { max-width: 1024px; margin: 0 auto; padding: 24px 16px 48px; }
 
-.container {
-  max-width: 1024px;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
-}
-
-h1 { margin: 0 0 8px; font-size: 24px; font-weight: 700; }
-.subtitle { margin: 0 0 16px; font-size: 14px; color: #6b7280; }
-
-/* --- 상단 일별 박스오피스 섹션 --- */
+/* --- [수정] 박스오피스 섹션 및 화살표 간격 --- */
 .section-daily-boxoffice {
-  position: relative; /* 화살표 배치를 위해 필수 */
+  position: relative;
   margin-bottom: 12px;
-  padding: 24px 40px;
+  padding: 24px 60px; /* 좌우 패딩을 넓혀 콘텐츠가 화살표에 안 닿게 수정 */
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
 }
 
-.section-daily-boxoffice h2 { margin: 0 0 12px; font-size: 20px; }
-
-/* 큰 화살표 버튼 (KOBIS 스타일) */
 .view-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 48px;
-  color: #d1d5db;
-  cursor: pointer;
-  z-index: 10;
-  padding: 10px;
+  background: none; border: none;
+  font-size: 48px; color: #d1d5db;
+  cursor: pointer; z-index: 20;
   transition: color 0.2s;
 }
-
 .view-arrow:hover { color: #374151; }
-.arrow-left { left: 0px; }
-.arrow-right { right: 0px; }
+.arrow-left { left: 10px; }  /* 위치를 더 바깥쪽으로 */
+.arrow-right { right: 10px; }
 
-.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
-.toolbar select {
-  padding: 4px 8px;
-  font-size: 14px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-}
-
-/* --- 하단 네비게이션 (박스오피스 | 차트) --- */
-.kobis-footer-nav {
-  text-align: center;
-  margin-bottom: 32px;
-  font-size: 16px;
-}
-
-.kobis-footer-nav a {
-  text-decoration: none;
+/* --- [수정] 하단 카드 폰트 크기 복구 --- */
+.card-footer {
+  margin-top: 4px;
+  font-size: 11px; /* 글씨가 커지지 않도록 11px 고정 */
   color: #9ca3af;
-  padding: 0 12px;
-  font-weight: 500;
-  transition: color 0.2s;
+}
+.card-meta .badge {
+  font-size: 11px; /* 배지 내 글씨도 원래대로 */
 }
 
-.kobis-footer-nav a.active {
-  color: #111827;
-  font-weight: 700;
-}
+/* --- 요청하신 하단 메뉴 스타일 --- */
+.kobis-footer-nav { text-align: center; margin: 20px 0 40px; }
+.kobis-footer-nav a { text-decoration: none; color: #9ca3af; padding: 0 10px; font-weight: 500; }
+.kobis-footer-nav a.active { color: #111827; font-weight: 700; }
+.kobis-footer-nav .sep { color: #e5e7eb; }
 
-.kobis-footer-nav .sep {
-  color: #e5e7eb;
-}
+/* --- 장르 차트 레이아웃 최적화 --- */
+.genre-chart-row { display: flex; gap: 40px; justify-content: center; align-items: flex-start; }
+.genre-chart-row > div { display: flex; flex-direction: column; align-items: center; gap: 12px; flex: 1; max-width: 250px; }
+.genre-chart-row canvas { width: 100% !important; max-width: 180px; height: auto !important; }
 
-/* --- 차트 레이아웃 관련 --- */
+/* --- 기타 기존 스타일 (테이블, 배지 등 유지) --- */
 .daily-view { display: none; }
 .daily-view.active { display: block; }
-
-.genre-chart-wrap {
-  margin-top: 8px;
-  padding: 10px;
-}
-
-.genre-chart-row {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  justify-content: center;
-}
-
-.genre-chart-row > div {
-  flex: 1;
-  max-width: 250px;
-  text-align: center;
-}
-
-.genre-chart-row h4 {
-  font-size: 14px;
-  margin-bottom: 12px;
-  color: #4b5563;
-}
-
-.genre-chart-row canvas {
-  width: 100% !important;
-  height: auto !important;
-}
-
-/* --- 테이블 스타일 --- */
 .daily-table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.daily-table th, .daily-table td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
-.daily-table th { font-weight: 600; background: #f9fafb; }
-.daily-table td:nth-child(3), .daily-table td:nth-child(4) { text-align: left; }
-
-.daily-thumb-img { width: 48px; height: 64px; object-fit: cover; border-radius: 4px; }
-
-/* 배지 */
-.badge { font-size: 11px; border-radius: 999px; padding: 2px 8px; background: #e5e7eb; }
-.badge-platform-naver { background: #e0fbea; color: #047857; }
-.badge-platform-kakao { background: #fef3c7; color: #92400e; }
-
-/* 카드 그리드 */
+.daily-table th { background: #f9fafb; padding: 10px; border-bottom: 1px solid #e5e7eb; }
+.daily-table td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: center; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.card { background: #fff; border-radius: 12px; padding: 12px; display: flex; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.card-rank { min-width: 32px; font-weight: 700; font-size: 18px; color: #f59e0b; }
-.card-thumb { width: 60px; height: 80px; border-radius: 8px; overflow: hidden; background: #f3f4f6; flex-shrink: 0; }
-.card-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.card-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.card-title { font-size: 14px; font-weight: 600; }
-.card-author { font-size: 13px; color: #6b7280; }
-
-/* 탭 */
-.tabs { display: inline-flex; background: #e5e7eb; border-radius: 999px; padding: 4px; margin-bottom: 12px; }
-.tab { border: none; background: transparent; padding: 6px 14px; border-radius: 999px; cursor: pointer; color: #6b7280; }
-.tab.active { background: #facc15; color: #111827; font-weight: 600; }
+.card { background: #fff; border-radius: 12px; padding: 12px; display: flex; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }

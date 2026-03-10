@@ -357,3 +357,13 @@ h1 {
   background-color: #ffeb00;
   color: #3c1e1e;
 }
+
+/ 손가락 포인트 /
+
+.title-cell {
+  cursor: pointer;
+}
+
+.title-cell:hover {
+  text-decoration: underline;
+}

@@ -1,7 +1,7 @@
 // =======================
 // 설정
 // =======================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuDzAA3z1R4GwEj2M6lTu1uygGEtHYEj_GQ1f0NSJhTUaYiqgJOgRpYfpYRlrphIMOLQ/exec"; // 기존에 쓰던 URL
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyuDzAA3z1R4GwEj2M6lTu1uygGEtHYEj_GQ1f0NSJhTUaYiqgJOgRpYfpYRlrphIMOLQ/exec"; // 배포된 Apps Script 웹앱 URL
 
 // 통합 / 네이버 / 카카오 데이터
 let totalItems = [];   // 통합 시트 (통합용)
@@ -10,6 +10,9 @@ let kakaoRaw = [];     // 카카오 시트 원본 TOP20
 
 // 통합 랭킹 계산 결과 (TOP40)
 let combinedItems = [];
+
+// 상세 레이어 차트 객체
+let detailChart = null;
 
 // "1,307만", "7억 3,316만" → 숫자로 변환
 function parseViews(text) {
@@ -178,15 +181,30 @@ function renderDailyTable() {
     tr.innerHTML = `
       <td class="daily-thumb-cell">${thumbHtml}</td>
       <td>${todayRank}</td>
-      <td>${sourceFilter === "all" ? item["제목"] : item["제목"]}</td>
-      <td>${sourceFilter === "all" ? item["작가"] : item["작가"]}</td>
-      <td><span class="badge ${platformClass}">${sourceFilter === "all" ? platformText : platformText}</span></td>
+      <td class="title-cell"
+          data-title="${item["제목"]}"
+          data-author="${item["작가"] || ""}"
+          data-platform="${platformText}">
+        ${item["제목"]}
+      </td>
+      <td>${item["작가"]}</td>
+      <td><span class="badge ${platformClass}">${platformText}</span></td>
       <td>${todayViews}</td>
       <td>${prevRank || "-"}</td>
       <td>${rankDiff}</td>
       <td>${viewDiff || viewRate ? `${viewDiff} ${viewRate}` : "-"}</td>
     `;
     tbody.appendChild(tr);
+  });
+
+  // 제목 클릭 → 상세 레이어 열기
+  document.querySelectorAll(".title-cell").forEach((td) => {
+    td.addEventListener("click", () => {
+      const title = td.dataset.title;
+      const author = td.dataset.author;
+      const platform = td.dataset.platform; // "네이버" / "카카오"
+      openDetailLayer({ title, author, platform });
+    });
   });
 }
 
@@ -311,6 +329,135 @@ function renderCards(filter) {
 }
 
 // =======================
+// 상세 레이어 (KOBIS 스타일)
+// =======================
+
+function setupDetailLayer() {
+  const layer = document.getElementById("detail-layer");
+  if (!layer) return;
+
+  const closeBtn = document.getElementById("detail-close");
+  const backdrop = layer.querySelector(".detail-backdrop");
+
+  const tabs = layer.querySelectorAll(".detail-tab");
+  const panes = layer.querySelectorAll(".detail-pane");
+
+  // 닫기
+  function close() {
+    layer.classList.add("hidden");
+  }
+  if (closeBtn) closeBtn.addEventListener("click", close);
+  if (backdrop) backdrop.addEventListener("click", close);
+
+  // 탭 클릭
+  tabs.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const tabName = btn.dataset.tab;
+
+      tabs.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      panes.forEach((p) => {
+        if (p.dataset.tab === tabName) {
+          p.classList.add("active");
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    });
+  });
+}
+
+// 제목 클릭 시 호출
+async function openDetailLayer({ title, author, platform }) {
+  const layer = document.getElementById("detail-layer");
+  if (!layer) return;
+
+  const titleEl = document.getElementById("detail-title");
+  const metaEl = document.getElementById("detail-meta");
+
+  titleEl.textContent = `${platform} · ${title}`;
+  metaEl.innerHTML = `
+    <div><strong>작가</strong> : ${author || "-"}</div>
+    <div><strong>플랫폼</strong> : ${platform}</div>
+    <div>최근 7일 히스토리</div>
+  `;
+
+  // 기본 탭을 info로
+  layer.querySelectorAll(".detail-tab").forEach((b) => {
+    b.classList.toggle("active", b.dataset.tab === "info");
+  });
+  layer.querySelectorAll(".detail-pane").forEach((p) => {
+    p.classList.toggle("active", p.dataset.tab === "info");
+  });
+
+  // 차트 데이터 fetch
+  try {
+    const params = new URLSearchParams({
+      action: "titleHistory",
+      title,
+      source: platform, // Apps Script에서 "네이버"/"카카오"를 naver/kakao로 매핑
+      days: 7,
+    });
+    const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+    const data = await res.json(); // [{날짜, 오늘순위, 오늘조회수}, ...]
+
+    const labels = data.map(d => d["날짜"].slice(5));
+    const views = data.map(d => parseViews(d["오늘조회수"]));
+    const ranks = data.map(d => Number(d["오늘순위"]));
+
+    const canvas = document.getElementById("detail-chart");
+    if (detailChart) {
+      detailChart.destroy();
+    }
+
+    detailChart = new Chart(canvas, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "조회수",
+            data: views,
+            borderColor: "#007bff",
+            backgroundColor: "rgba(0,123,255,0.1)",
+            yAxisID: "yViews",
+          },
+          {
+            label: "순위",
+            data: ranks,
+            borderColor: "#ff5c5c",
+            backgroundColor: "rgba(255,92,92,0.1)",
+            yAxisID: "yRank",
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: "index", intersect: false },
+        scales: {
+          yViews: {
+            type: "linear",
+            position: "left",
+            title: { display: true, text: "조회수" }
+          },
+          yRank: {
+            type: "linear",
+            position: "right",
+            reverse: true,
+            title: { display: true, text: "순위" }
+          }
+        }
+      }
+    });
+  } catch (e) {
+    console.error("detail fetch error", e);
+  }
+
+  layer.classList.remove("hidden");
+}
+
+// =======================
 // 초기화 / 이벤트
 // =======================
 
@@ -349,12 +496,10 @@ async function fetchData() {
     // 2) 네이버 원본 TOP20
     const resNaver = await fetch(`${APPS_SCRIPT_URL}?action=getRaw&source=naver`);
     naverRaw = await resNaver.json();
-    console.log('naverRaw[0]', naverRaw[0]);  // 🔍 여기 추가
 
     // 3) 카카오 원본 TOP20
     const resKakao = await fetch(`${APPS_SCRIPT_URL}?action=getRaw&source=kakao`);
     kakaoRaw = await resKakao.json();
-    console.log('kakaoRaw[0]', kakaoRaw[0]);  // 🔍 여기 추가
 
     // 통합 랭킹 계산 (하단 통합 + 상단 전체 기반)
     combinedItems = buildCombinedRanking(totalItems);
@@ -373,5 +518,6 @@ async function fetchData() {
 document.addEventListener("DOMContentLoaded", () => {
   setupTabs();
   setupDailyControls();
+  setupDetailLayer();
   fetchData();
 });

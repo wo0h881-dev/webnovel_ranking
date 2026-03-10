@@ -14,9 +14,6 @@
     <!-- 상단: 일별 웹소설 박스오피스 -->
 <section class="section-daily-boxoffice">
   <div class="daily-header">
-    <h2>일별 웹소설 박스오피스 TOP 10</h2>
-    <section class="section-daily-boxoffice">
-  <div class="daily-header">
     <div class="daily-header-left">
       <h2>일별 웹소설 박스오피스 TOP 10</h2>
       <div class="toolbar">
@@ -35,12 +32,24 @@
   <!-- 뷰1: 테이블 -->
   <div id="daily-view-table" class="daily-view active">
     <table class="daily-table">
-      <thead>...</thead>
+      <thead>
+        <tr>
+          <th>썸네일</th>
+          <th>순위</th>
+          <th>제목</th>
+          <th>작가</th>
+          <th>플랫폼</th>
+          <th>오늘 조회수</th>
+          <th>전일 순위</th>
+          <th>순위 변화</th>
+          <th>전일 대비</th>
+        </tr>
+      </thead>
       <tbody id="daily-tbody"></tbody>
     </table>
   </div>
 
-  <!-- 뷰2: 차트 (장르 도넛 등) -->
+  <!-- 뷰2: 차트 (장르 도넛) -->
   <div id="daily-view-chart" class="daily-view">
     <div class="genre-chart-wrap">
       <h3>플랫폼별 장르 비율</h3>

@@ -358,12 +358,18 @@ h1 {
   color: #3c1e1e;
 }
 
-/ 손가락 포인트 /
-
+/* 제목 셀 전체를 클릭 영역 + 손가락 커서로 */
 .title-cell {
   cursor: pointer;
 }
 
+/* 혹시 안에 span 등이 생겨도 모두 손가락 커서 유지 */
+.title-cell * {
+  cursor: pointer;
+}
+
+/* 눌리는 느낌만 추가 (선택) */
 .title-cell:hover {
   text-decoration: underline;
 }
+

@@ -1,153 +1,276 @@
 <!DOCTYPE html>
+
 <html lang="ko">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <title>통합 웹소설 TOP 40</title>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <link rel="stylesheet" href="styles.css" />
+
 </head>
+
 <body>
-<div class="container">
-  <h1>통합 웹소설 TOP 40</h1>
-  <p class="subtitle">네이버 시리즈 · 카카오페이지 일간 TOP 20 통합 랭킹</p>
+
+  <div class="container">
+
+    <h1>통합 웹소설 TOP 40</h1>
+
+    <p class="subtitle">네이버 시리즈 · 카카오페이지 일간 TOP 20 통합 랭킹</p>
+
+
 
     <!-- 상단: 일별 웹소설 박스오피스 -->
-<section class="section-daily-boxoffice">
-    <button id="view-prev" class="view-arrow arrow-left">〈</button>
-    <button id="view-next" class="view-arrow arrow-right">〉</button>
 
-<div class="daily-header">
-      <div class="daily-header-left">
-        <h2>일별 웹소설 박스오피스 TOP 10</h2>
-        <div class="toolbar">
-          <select id="source-filter">
-            <option value="all">전체</option>
-            <option value="naver">네이버</option>
-            <option value="kakao">카카오</option>
-          </select>
-        </div>
+<section class="section-daily-boxoffice">
+
+  <div class="daily-header">
+
+    <div class="daily-header-left">
+
+      <h2>일별 웹소설 박스오피스 TOP 10</h2>
+
+      <div class="toolbar">
+
+        <select id="source-filter">
+
+          <option value="all">전체</option>
+
+          <option value="naver">네이버</option>
+
+          <option value="kakao">카카오</option>
+
+        </select>
+
       </div>
+
     </div>
+
+    <div class="daily-controls">
+
+      <button id="daily-view-toggle" class="daily-view-toggle">▶</button>
+
+    </div>
+
+  </div>
+
+
 
   <!-- 뷰1: 테이블 -->
+
   <div id="daily-view-table" class="daily-view active">
+
     <table class="daily-table">
+
       <thead>
+
         <tr>
+
           <th>썸네일</th>
+
           <th>순위</th>
+
           <th>제목</th>
+
           <th>작가</th>
+
           <th>플랫폼</th>
+
           <th>오늘 조회수</th>
+
           <th>전일 순위</th>
+
           <th>순위 변화</th>
+
           <th>전일 대비</th>
+
         </tr>
+
       </thead>
+
       <tbody id="daily-tbody"></tbody>
+
     </table>
+
   </div>
+
+
 
   <!-- 뷰2: 차트 (장르 도넛) -->
-<div id="daily-view-chart" class="daily-view">
-      <div class="genre-chart-wrap">
-        <h3>플랫폼별 장르 비율</h3>
-        <div class="genre-chart-row">
-          <div>
-            <h4>카카오</h4>
-            <canvas id="chart-genre-kakao"></canvas>
-          </div>
-          <div>
-            <h4>네이버</h4>
-            <canvas id="chart-genre-naver"></canvas>
-          </div>
+
+  <div id="daily-view-chart" class="daily-view">
+
+    <div class="genre-chart-wrap">
+
+      <h3>플랫폼별 장르 비율</h3>
+
+      <div class="genre-chart-row">
+
+        <div>
+
+          <h4>카카오</h4>
+
+          <canvas id="chart-genre-kakao" width="160" height="160"></canvas>
+
         </div>
+
+        <div>
+
+          <h4>네이버</h4>
+
+          <canvas id="chart-genre-naver" width="160" height="160"></canvas>
+
+        </div>
+
       </div>
-    </div>
-  </section>
 
-<nav class="kobis-footer-nav">
-    <a href="#" id="menu-table-link" class="active">웹소설 박스오피스</a>
-    <span class="sep">|</span>
-    <a href="#" id="menu-chart-link">차트</a>
-  </nav>
-
-  <section class="section-cards">
-    <div class="tabs">
-      <button class="tab active" data-filter="all">통합</button>
-      <button class="tab" data-filter="naver">네이버</button>
-      <button class="tab" data-filter="kakao">카카오</button>
     </div>
-    <div id="card-grid" class="card-grid"></div>
-  </section>
-</div>
+
+  </div>
+
+</section>
+
+
+
+
 
     <!-- 하단: 통합 TOP 40 카드 -->
+
     <section class="section-cards">
+
       <div class="tabs">
+
         <button class="tab active" data-filter="all">통합</button>
+
         <button class="tab" data-filter="naver">네이버</button>
+
         <button class="tab" data-filter="kakao">카카오</button>
+
       </div>
 
+
+
       <div id="status" class="status"></div>
+
       <div id="card-grid" class="card-grid"></div>
+
     </section>
+
   </div>
+
   
+
   <!-- Chart.js 추가 -->
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+
+
   <!-- 너의 로직 -->
+
   <script src="script.js"></script>
 
+
+
   <!-- 상세 레이어(모달) -->
+
 <div id="detail-layer" class="detail-layer hidden">
+
   <div class="detail-backdrop"></div>
+
   <div class="detail-panel">
+
     <div class="detail-header">
+
   <h2 id="detail-title">
+
     <span class="detail-title-text">작품 제목</span>
+
     <span class="detail-platform-badge detail-platform--kakao">카카오</span>
+
     <!-- 네이버면 detail-platform--naver -->
+
   </h2>
+
   <button id="detail-close" class="detail-close">×</button>
+
 </div>
+
+
+
 
 
     <!-- 탭 버튼 -->
+
     <div class="detail-tabs">
+
       <button class="detail-tab active" data-tab="info">기본정보</button>
+
       <button class="detail-tab" data-tab="chart">히스토리 차트</button>
+
       <button class="detail-tab" data-tab="memo">메모</button>
+
     </div>
+
+
 
     <!-- 탭 내용 -->
+
     <div class="detail-contents">
+
       <div class="detail-pane active" data-tab="info">
+
         <div id="detail-meta"></div>
+
       </div>
+
+
 
       <div class="detail-pane" data-tab="chart">
+
         <canvas id="detail-chart" height="200"></canvas>
+
       </div>
+
+
 
       <div class="detail-pane" data-tab="memo">
+
         <textarea id="detail-memo" rows="6" style="width:100%;"></textarea>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
+
+
 
 </body>
+
 </html>
 
+
+
 <div id="detail-modal" class="modal hidden">
+
   <div class="modal-content">
+
     <button id="modal-close">닫기</button>
+
     <h2 id="modal-title"></h2>
+
     <canvas id="viewChart"></canvas>
+
     <canvas id="rankChart"></canvas>
+
   </div>
+
 </div>
+

@@ -233,7 +233,7 @@ function createCard(item, rank) {
   const todayRank = item._platformRank ?? item["오늘순위"] ?? "";
   const prevRank = item["전일순위"] ?? "";
   const rankDiff = item["순위변화"] || "-";
-  const todayViews = item["조회수"] || "-";
+  const todayViews = item["오늘조회수"] || "-";
   const prevViews = item["전일조회수"] || "-";
   const viewDiff = item["조회수증감"] || "";
   const viewRate = item["조회수증감률"] || "";
@@ -276,7 +276,7 @@ function createRawCard(item, rank, platform) {
     : `<span>썸네일 없음</span>`;
 
   const todayRank = rank;
-  const todayViews = item["오늘조회수"] || "-";
+  const todayViews = item["조회수"] || "-";
 
   div.innerHTML = `
     <div class="card-rank">${rank}</div>

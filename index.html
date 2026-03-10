@@ -13,6 +13,9 @@
 
     <!-- 상단: 일별 웹소설 박스오피스 -->
 <section class="section-daily-boxoffice">
+  <button id="view-prev" class="view-arrow arrow-left">〈</button>
+  <button id="view-next" class="view-arrow arrow-right">〉</button>
+
   <div class="daily-header">
     <div class="daily-header-left">
       <h2>일별 웹소설 박스오피스 TOP 10</h2>
@@ -23,9 +26,6 @@
           <option value="kakao">카카오</option>
         </select>
       </div>
-    </div>
-    <div class="daily-controls">
-      <button id="daily-view-toggle" class="daily-view-toggle">▶</button>
     </div>
   </div>
 
@@ -50,23 +50,28 @@
   </div>
 
   <!-- 뷰2: 차트 (장르 도넛) -->
-  <div id="daily-view-chart" class="daily-view">
+ <div id="daily-view-chart" class="daily-view">
     <div class="genre-chart-wrap">
       <h3>플랫폼별 장르 비율</h3>
       <div class="genre-chart-row">
         <div>
           <h4>카카오</h4>
-          <canvas id="chart-genre-kakao" width="160" height="160"></canvas>
+          <canvas id="chart-genre-kakao"></canvas>
         </div>
         <div>
           <h4>네이버</h4>
-          <canvas id="chart-genre-naver" width="160" height="160"></canvas>
+          <canvas id="chart-genre-naver"></canvas>
         </div>
       </div>
     </div>
   </div>
 </section>
 
+<nav class="kobis-footer-nav">
+  <a href="#" id="menu-table-link" class="active">웹소설 박스오피스</a>
+  <span class="sep">|</span>
+  <a href="#" id="menu-chart-link">차트</a>
+</nav>
 
     <!-- 하단: 통합 TOP 40 카드 -->
     <section class="section-cards">

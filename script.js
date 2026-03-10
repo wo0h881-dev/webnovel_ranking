@@ -576,22 +576,30 @@ function setupNavigation() {
       viewChart.classList.add("active");
       tableLink.classList.remove("active");
       chartLink.classList.add("active");
-      if (!isChartRendered) {
-        loadGenrePlatformShare(); // 차트 데이터 로드 함수 호출
-        isChartRendered = true;
-      }
+
+      // 차트 영역이 active가 된 후에 차트를 그려야 깨지지 않습니다.
+      setTimeout(() => {
+        if (!isChartRendered) {
+          if (typeof loadGenrePlatformShare === "function") {
+            loadGenrePlatformShare();
+            isChartRendered = true;
+          }
+        }
+      }, 50); 
     }
   }
 
+  // 화살표 이벤트 연결
   prevBtn.addEventListener("click", () => switchTo('table'));
   nextBtn.addEventListener("click", () => switchTo('chart'));
+  
+  // 하단 메뉴 이벤트 연결
   tableLink.addEventListener("click", (e) => { e.preventDefault(); switchTo('table'); });
   chartLink.addEventListener("click", (e) => { e.preventDefault(); switchTo('chart'); });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
-  // fetchData() 등 기존 초기화 로직...
 });
 
 

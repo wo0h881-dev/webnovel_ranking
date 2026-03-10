@@ -7,27 +7,27 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>통합 웹소설 TOP 40</h1>
-    <p class="subtitle">네이버 시리즈 · 카카오페이지 일간 TOP 20 통합 랭킹</p>
+<div class="container">
+  <h1>통합 웹소설 TOP 40</h1>
+  <p class="subtitle">네이버 시리즈 · 카카오페이지 일간 TOP 20 통합 랭킹</p>
 
     <!-- 상단: 일별 웹소설 박스오피스 -->
 <section class="section-daily-boxoffice">
-  <button id="view-prev" class="view-arrow arrow-left">〈</button>
-  <button id="view-next" class="view-arrow arrow-right">〉</button>
+    <button id="view-prev" class="view-arrow arrow-left">〈</button>
+    <button id="view-next" class="view-arrow arrow-right">〉</button>
 
-  <div class="daily-header">
-    <div class="daily-header-left">
-      <h2>일별 웹소설 박스오피스 TOP 10</h2>
-      <div class="toolbar">
-        <select id="source-filter">
-          <option value="all">전체</option>
-          <option value="naver">네이버</option>
-          <option value="kakao">카카오</option>
-        </select>
+<div class="daily-header">
+      <div class="daily-header-left">
+        <h2>일별 웹소설 박스오피스 TOP 10</h2>
+        <div class="toolbar">
+          <select id="source-filter">
+            <option value="all">전체</option>
+            <option value="naver">네이버</option>
+            <option value="kakao">카카오</option>
+          </select>
+        </div>
       </div>
     </div>
-  </div>
 
   <!-- 뷰1: 테이블 -->
   <div id="daily-view-table" class="daily-view active">
@@ -50,28 +50,38 @@
   </div>
 
   <!-- 뷰2: 차트 (장르 도넛) -->
- <div id="daily-view-chart" class="daily-view">
-    <div class="genre-chart-wrap">
-      <h3>플랫폼별 장르 비율</h3>
-      <div class="genre-chart-row">
-        <div>
-          <h4>카카오</h4>
-          <canvas id="chart-genre-kakao"></canvas>
-        </div>
-        <div>
-          <h4>네이버</h4>
-          <canvas id="chart-genre-naver"></canvas>
+<div id="daily-view-chart" class="daily-view">
+      <div class="genre-chart-wrap">
+        <h3>플랫폼별 장르 비율</h3>
+        <div class="genre-chart-row">
+          <div>
+            <h4>카카오</h4>
+            <canvas id="chart-genre-kakao"></canvas>
+          </div>
+          <div>
+            <h4>네이버</h4>
+            <canvas id="chart-genre-naver"></canvas>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
 <nav class="kobis-footer-nav">
-  <a href="#" id="menu-table-link" class="active">웹소설 박스오피스</a>
-  <span class="sep">|</span>
-  <a href="#" id="menu-chart-link">차트</a>
-</nav>
+    <a href="#" id="menu-table-link" class="active">웹소설 박스오피스</a>
+    <span class="sep">|</span>
+    <a href="#" id="menu-chart-link">차트</a>
+  </nav>
+
+  <section class="section-cards">
+    <div class="tabs">
+      <button class="tab active" data-filter="all">통합</button>
+      <button class="tab" data-filter="naver">네이버</button>
+      <button class="tab" data-filter="kakao">카카오</button>
+    </div>
+    <div id="card-grid" class="card-grid"></div>
+  </section>
+</div>
 
     <!-- 하단: 통합 TOP 40 카드 -->
     <section class="section-cards">

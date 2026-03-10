@@ -326,3 +326,34 @@ h1 {
   display: block;
 }
 
+/* 상세 레이어 제목 + 플랫폼 배지 */
+#detail-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.detail-title-text {
+  font-weight: 600;
+}
+
+.detail-platform-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* 네이버: 초록 */
+.detail-platform--naver {
+  background-color: #03c75a;
+}
+
+/* 카카오: 노랑 */
+.detail-platform--kakao {
+  background-color: #ffeb00;
+  color: #3c1e1e;
+}

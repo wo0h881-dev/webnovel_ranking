@@ -349,10 +349,12 @@ async function fetchData() {
     // 2) 네이버 원본 TOP20
     const resNaver = await fetch(`${APPS_SCRIPT_URL}?action=getRaw&source=naver`);
     naverRaw = await resNaver.json();
+    console.log('naverRaw[0]', naverRaw[0]);  // 🔍 여기 추가
 
     // 3) 카카오 원본 TOP20
     const resKakao = await fetch(`${APPS_SCRIPT_URL}?action=getRaw&source=kakao`);
     kakaoRaw = await resKakao.json();
+    console.log('kakaoRaw[0]', kakaoRaw[0]);  // 🔍 여기 추가
 
     // 통합 랭킹 계산 (하단 통합 + 상단 전체 기반)
     combinedItems = buildCombinedRanking(totalItems);

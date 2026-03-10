@@ -161,7 +161,7 @@ function renderDailyTable() {
       todayRank     = item._localRank ?? item["순위"] ?? "";
       prevRank      = "-"; // 원본 시트에는 전일 데이터 없음
       rankDiff      = "-";
-      todayViews    = item["조회수"] || "-";
+      todayViews    = item["오늘조회수"] || "-";
       viewDiff      = "";
       viewRate      = "";
       thumbUrl      = item["썸네일"] && String(item["썸네일"]).trim();
@@ -254,7 +254,7 @@ function createRawCard(item, rank, platform) {
     : `<span>썸네일 없음</span>`;
 
   const todayRank = rank;
-  const todayViews = item["조회수"] || "-";
+  const todayViews = item["오늘조회수"] || "-";
 
   div.innerHTML = `
     <div class="card-rank">${rank}</div>

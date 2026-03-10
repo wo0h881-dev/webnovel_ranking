@@ -750,34 +750,18 @@ h1 {
 
 /* 장르 도넛 섹션 카드 */
 
-.genre-chart-wrap {
-
-  margin-top: 8px;
-
-  padding: 16px 20px;
-
-  background: #ffffff;
-
-  border-radius: 12px;
-
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
-
-}
-
-
-
-/* 도넛과 텍스트 배치 */
-
+/* genre-chart-row canvas 를 직접 지정하는 것보다 부모에서 제어 */
 .genre-chart-row {
-
   display: flex;
-
   gap: 16px;
-
   align-items: center;
-
+  justify-content: center;
 }
 
+.genre-chart-row > div {
+  width: 45%; /* 부모 너비의 절반 정도로 설정 */
+  max-width: 200px;
+}
 
 
 /* 도넛 하나 영역 */

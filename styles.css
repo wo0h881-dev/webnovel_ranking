@@ -6,11 +6,9 @@ body {
   margin: 0;
   padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Noto Sans KR", system-ui, sans-serif;
-  background-color: #f3f4f6; /* 연한 회색 배경 */
+  background-color: #f3f4f6;
   color: #111827;
 }
-
-/* 레이아웃 래퍼 */
 
 .container {
   max-width: 1024px;
@@ -18,424 +16,129 @@ body {
   padding: 24px 16px 48px;
 }
 
-h1 {
-  margin: 0 0 8px;
-  font-size: 24px;
-  font-weight: 700;
-}
+h1 { margin: 0 0 8px; font-size: 24px; font-weight: 700; }
+.subtitle { margin: 0 0 16px; font-size: 14px; color: #6b7280; }
 
-.subtitle {
-  margin: 0 0 16px;
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* 상단: 일별 박스오피스 섹션 */
-
+/* --- 상단 일별 박스오피스 섹션 --- */
 .section-daily-boxoffice {
-  margin-bottom: 24px;
-  padding: 16px 20px;
+  position: relative; /* 화살표 배치를 위해 필수 */
+  margin-bottom: 12px;
+  padding: 24px 40px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
 }
 
-.section-daily-boxoffice h2 {
-  margin: 0 0 12px;
-  font-size: 20px;
+.section-daily-boxoffice h2 { margin: 0 0 12px; font-size: 20px; }
+
+/* 큰 화살표 버튼 (KOBIS 스타일) */
+.view-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 48px;
+  color: #d1d5db;
+  cursor: pointer;
+  z-index: 10;
+  padding: 10px;
+  transition: color 0.2s;
 }
 
-.section-daily-boxoffice .toolbar {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 12px;
-}
+.view-arrow:hover { color: #374151; }
+.arrow-left { left: 0px; }
+.arrow-right { right: 0px; }
 
-.section-daily-boxoffice select {
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.toolbar select {
   padding: 4px 8px;
   font-size: 14px;
-  background: #ffffff;
-  color: #111827;
   border-radius: 6px;
   border: 1px solid #d1d5db;
 }
 
-/* 테이블 스타일 */
-
-.daily-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-}
-
-.daily-table thead tr {
-  background: #f9fafb;
-}
-
-.daily-table th,
-.daily-table td {
-  padding: 6px 8px;
-  border-bottom: 1px solid #e5e7eb;
-  text-align: center; /* 기본 가운데 정렬 */
-}
-
-.daily-table th {
-  font-weight: 600;
-  color: #374151;
-}
-
-.daily-table td {
-  color: #4b5563;
-}
-
-.daily-table th:nth-child(3),
-.daily-table td:nth-child(3),
-.daily-table th:nth-child(4),
-.daily-table td:nth-child(4) {
-  text-align: left; /* 제목/작가만 좌측 정렬 */
-}
-
-/* 썸네일 셀 */
-
-.daily-thumb-cell {
-  width: 56px;
-}
-
-.daily-thumb-img {
-  width: 48px;
-  height: 64px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #e5e7eb;
-}
-
-.daily-thumb-placeholder {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 64px;
-  border-radius: 4px;
-  background: #f3f4f6;
-  color: #9ca3af;
-  font-size: 10px;
-}
-
-/* 플랫폼 배지 (카카오페이지/네이버 느낌) */
-
-.badge {
-  font-size: 11px;
-  border-radius: 999px;
-  padding: 2px 8px;
-  background: #e5e7eb;
-  color: #4b5563;
-}
-
-.badge-platform-naver {
-  background: #e0fbea;
-  color: #047857;
-}
-
-.badge-platform-kakao {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-/* 탭 (하단 카드 섹션) */
-
-.tabs {
-  display: inline-flex;
-  background: #e5e7eb;
-  border-radius: 999px;
-  padding: 4px;
-  margin-bottom: 12px;
-}
-
-.tab {
-  border: none;
-  background: transparent;
-  color: #6b7280;
-  font-size: 13px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.tab.active {
-  background: #facc15;
-  color: #111827;
-  font-weight: 600;
-}
-
-.status {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 12px;
-}
-
-/* 카드 그리드 (하단 통합 TOP40) */
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-}
-
-.card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 12px 12px 14px;
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
-}
-
-/* 통합 순위 배지 */
-
-.card-rank {
-  min-width: 32px;
+/* --- 하단 네비게이션 (박스오피스 | 차트) --- */
+.kobis-footer-nav {
   text-align: center;
-  font-weight: 700;
-  font-size: 18px;
-  color: #f59e0b;
+  margin-bottom: 32px;
+  font-size: 16px;
 }
 
-/* 썸네일 영역 */
-
-.card-thumb {
-  width: 60px;
-  height: 80px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f3f4f6;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
+.kobis-footer-nav a {
+  text-decoration: none;
   color: #9ca3af;
+  padding: 0 12px;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
-.card-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-/* 텍스트 파트 */
-
-.card-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.card-title {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 2px;
+.kobis-footer-nav a.active {
   color: #111827;
+  font-weight: 700;
 }
 
-.card-author {
-  font-size: 13px;
-  color: #6b7280;
+.kobis-footer-nav .sep {
+  color: #e5e7eb;
 }
 
-.card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 4px;
-}
+/* --- 차트 레이아웃 관련 --- */
+.daily-view { display: none; }
+.daily-view.active { display: block; }
 
-.card-footer {
-  margin-top: 4px;
-  font-size: 11px;
-  color: #9ca3af;
-}
-
-/* 히든 레이어 영역 */
-
-.detail-layer.hidden { display: none; }
-.detail-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-}
-
-.detail-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-}
-
-.detail-panel {
-  position: absolute;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 960px;
-  max-width: 95%;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  padding: 16px 20px 20px;
-}
-
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.detail-close {
-  border: none;
-  background: transparent;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.detail-tabs {
-  margin-top: 12px;
-  border-bottom: 1px solid #ddd;
-}
-
-.detail-tab {
-  border: none;
-  background: transparent;
-  padding: 8px 16px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.detail-tab.active {
-  border-bottom: 2px solid #007bff;
-  font-weight: 600;
-}
-
-.detail-pane {
-  display: none;
-  padding-top: 12px;
-}
-
-.detail-pane.active {
-  display: block;
-}
-
-/* 상세 레이어 제목 + 플랫폼 배지 */
-#detail-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.detail-title-text {
-  font-weight: 600;
-}
-
-.detail-platform-badge {
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #ffffff;
-}
-
-/* 네이버: 초록 */
-.detail-platform--naver {
-  background-color: #03c75a;
-}
-
-/* 카카오: 노랑 */
-.detail-platform--kakao {
-  background-color: #ffeb00;
-  color: #3c1e1e;
-}
-
-/* 제목 셀 전체를 클릭 영역 + 손가락 커서로 */
-.title-cell {
-  cursor: pointer;
-}
-
-/* 혹시 안에 span 등이 생겨도 모두 손가락 커서 유지 */
-.title-cell * {
-  cursor: pointer;
-}
-
-/* 눌리는 느낌만 추가 (선택) */
-.title-cell:hover {
-  text-decoration: underline;
-}
-
-/* 장르 도넛 섹션 카드 */
 .genre-chart-wrap {
   margin-top: 8px;
-  padding: 16px 20px;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+  padding: 10px;
 }
 
-/* 도넛과 텍스트 배치 */
-/* genre-chart-row canvas 를 직접 지정하는 것보다 부모에서 제어 */
 .genre-chart-row {
   display: flex;
-  gap: 16px;
+  gap: 24px;
   align-items: center;
   justify-content: center;
 }
 
 .genre-chart-row > div {
-  width: 45%; /* 부모 너비의 절반 정도로 설정 */
-  max-width: 200px;
+  flex: 1;
+  max-width: 250px;
+  text-align: center;
 }
 
-/* 도넛 실제 표시 크기 */
+.genre-chart-row h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #4b5563;
+}
+
 .genre-chart-row canvas {
-  width: 120px;
-  height: 120px;
+  width: 100% !important;
+  height: auto !important;
 }
 
+/* --- 테이블 스타일 --- */
+.daily-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.daily-table th, .daily-table td { padding: 10px 8px; border-bottom: 1px solid #e5e7eb; text-align: center; }
+.daily-table th { font-weight: 600; background: #f9fafb; }
+.daily-table td:nth-child(3), .daily-table td:nth-child(4) { text-align: left; }
 
-/* 뷰 토글 */
-.daily-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
+.daily-thumb-img { width: 48px; height: 64px; object-fit: cover; border-radius: 4px; }
 
-.daily-header-left {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+/* 배지 */
+.badge { font-size: 11px; border-radius: 999px; padding: 2px 8px; background: #e5e7eb; }
+.badge-platform-naver { background: #e0fbea; color: #047857; }
+.badge-platform-kakao { background: #fef3c7; color: #92400e; }
 
-.daily-controls {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+/* 카드 그리드 */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.card { background: #fff; border-radius: 12px; padding: 12px; display: flex; gap: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.card-rank { min-width: 32px; font-weight: 700; font-size: 18px; color: #f59e0b; }
+.card-thumb { width: 60px; height: 80px; border-radius: 8px; overflow: hidden; background: #f3f4f6; flex-shrink: 0; }
+.card-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.card-body { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.card-title { font-size: 14px; font-weight: 600; }
+.card-author { font-size: 13px; color: #6b7280; }
 
-.daily-view-toggle {
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-  border-radius: 999px;
-  padding: 4px 8px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.daily-view {
-  display: none;
-}
-
-.daily-view.active {
-  display: block;
-}
+/* 탭 */
+.tabs { display: inline-flex; background: #e5e7eb; border-radius: 999px; padding: 4px; margin-bottom: 12px; }
+.tab { border: none; background: transparent; padding: 6px 14px; border-radius: 999px; cursor: pointer; color: #6b7280; }
+.tab.active { background: #facc15; color: #111827; font-weight: 600; }

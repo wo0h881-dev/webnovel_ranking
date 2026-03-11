@@ -865,3 +865,52 @@ h1 {
   display: block;
 
 }
+
+/* 순위변화 색상 */
+.rank-diff {
+  font-size: 12px;
+}
+
+.rank-diff--up {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.rank-diff--down {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.rank-diff--same {
+  color: #757575;
+}
+
+.rank-diff--new {
+  color: #ff9800; /* 주황/노랑 느낌 */
+  font-weight: 700;
+}
+
+/* 전일 대비(증감률) 색상 */
+.change {
+  font-size: 12px;
+}
+
+.change--up {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.change--down {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.change--zero {
+  color: #9e9e9e;
+}
+
+.change--new {
+  color: #ffb300;
+  font-weight: 700;
+}
+

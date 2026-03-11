@@ -268,9 +268,28 @@ function createCard(item, rank) {
   const prevRank = item["전일순위"] ?? "";
   const rankDiff = item["순위변화"] || "-";
   const todayViews = item["오늘조회수"] || "-";
-  const prevViews = item["전일조회수"] || "-";
-  const viewDiff = item["조회수증감"] || "";
   const viewRate = item["조회수증감률"] || "";
+
+  function formatRankLine() {
+    // 예: "카카오 오늘 1위 (유지)" 또는 "카카오 오늘 1위 (NEW)"
+    if (!prevRank || prevRank === "NEW") {
+      return `${platformLabel} 오늘 ${todayRank}위 (NEW)`;
+    }
+    return `${platformLabel} 오늘 ${todayRank}위 (${rankDiff})`;
+  }
+
+  function formatChangeLine() {
+    // 예: "누적 조회수 3.5억 · 전일대비 +50.80%"
+    if (!viewRate || viewRate === "NEW") {
+      return `누적 조회수 ${todayViews}`;
+    }
+    const num = parseFloat(String(viewRate).replace("%", ""));
+    if (isNaN(num) || num === 0) {
+      return `누적 조회수 ${todayViews} · 전일대비 0%`;
+    }
+    const sign = num > 0 ? "+" : "";
+    return `누적 조회수 ${todayViews} · 전일대비 ${sign}${num.toFixed(2)}%`;
+  }
 
   div.innerHTML = `
     <div class="card-rank">${rank}</div>
@@ -284,16 +303,15 @@ function createCard(item, rank) {
         <span class="badge">${item["날짜"] || ""}</span>
       </div>
       <div class="card-footer">
-        ${platformLabel} 오늘 ${todayRank}위
-        ${prevRank ? `(전일 ${prevRank}위, ${rankDiff})` : ""}
-        · 조회수 ${todayViews}
-        ${viewDiff || viewRate ? ` (전일 ${prevViews}, ${viewDiff} / ${viewRate})` : ""}
+        ${formatRankLine()}<br />
+        ${formatChangeLine()}
       </div>
     </div>
   `;
 
   return div;
 }
+
 
 // 하단 네이버/카카오 카드용 DOM (원본 TOP20)
 function createRawCard(item, rank, platform) {

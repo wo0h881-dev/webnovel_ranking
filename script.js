@@ -136,7 +136,7 @@ function renderDailyTable() {
 
   tbody.innerHTML = "";
 
-  top10.forEach((item) => {
+    top10.forEach((item) => {
     const tr = document.createElement("tr");
 
     let platformLabel = "";
@@ -144,7 +144,6 @@ function renderDailyTable() {
     let prevRank = "";
     let rankDiff = "-";
     let todayViews = "-";
-    let viewDiff = "";
     let viewRate = "";
     let thumbUrl = "";
 
@@ -155,7 +154,6 @@ function renderDailyTable() {
       prevRank = item["전일순위"] ?? "";
       rankDiff = item["순위변화"] || "-";
       todayViews = item["오늘조회수"] || "-";
-      viewDiff = item["조회수증감"] || "";
       viewRate = item["조회수증감률"] || "";
       thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
     } else {
@@ -165,9 +163,44 @@ function renderDailyTable() {
       prevRank = "-"; // 원본 시트에는 전일 데이터 없음
       rankDiff = "-";
       todayViews = item["조회수"] || "-";
-      viewDiff = "";
       viewRate = "";
       thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
+    }
+
+    // 순위변화 색/텍스트
+    function renderRankDiff(rankDiff) {
+      if (!rankDiff || rankDiff === "-") return "-";
+      if (rankDiff === "유지") {
+        return `<span class="rank-diff rank-diff--same">유지</span>`;
+      }
+      if (rankDiff === "NEW") {
+        return `<span class="rank-diff rank-diff--new">NEW</span>`;
+      }
+      if (rankDiff.startsWith("▲")) {
+        return `<span class="rank-diff rank-diff--up">${rankDiff}</span>`;
+      }
+      if (rankDiff.startsWith("▼")) {
+        return `<span class="rank-diff rank-diff--down">${rankDiff}</span>`;
+      }
+      return rankDiff;
+    }
+
+    // 전일대비: 증감률만, + 빨강 / - 파랑 / NEW 노랑
+    function renderChangeCell(viewRate) {
+      if (!viewRate) return "-";
+      if (viewRate === "NEW") {
+        return `<span class="change change--new">NEW</span>`;
+      }
+
+      const num = parseFloat(String(viewRate).replace("%", ""));
+      if (isNaN(num) || num === 0) {
+        return `<span class="change change--zero">0%</span>`;
+      }
+      if (num > 0) {
+        return `<span class="change change--up">+${num.toFixed(2)}%</span>`;
+      } else {
+        return `<span class="change change--down">${num.toFixed(2)}%</span>`;
+      }
     }
 
     const thumbHtml = thumbUrl
@@ -195,11 +228,12 @@ function renderDailyTable() {
       <td><span class="badge ${platformClass}">${platformText}</span></td>
       <td>${todayViews}</td>
       <td>${prevRank || "-"}</td>
-      <td>${rankDiff}</td>
-      <td>${viewDiff || viewRate ? `${viewDiff} ${viewRate}` : "-"}</td>
+      <td>${renderRankDiff(rankDiff)}</td>
+      <td>${renderChangeCell(viewRate)}</td>
     `;
     tbody.appendChild(tr);
   });
+
 
   // 제목 클릭 → 상세 레이어 열기
   document.querySelectorAll(".title-cell").forEach((td) => {

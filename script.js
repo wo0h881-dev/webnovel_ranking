@@ -1,7 +1,7 @@
 // =======================
 // 설정(필수): Apps Script URL
 // =======================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-hbUm8nlFXoDmSteJuPmDPQJy1_oGfbdIzpKX9j5QuUxLGme7dnpje4pXMJ-wNrFdtA/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwF5Xv6yYX7mDf5FesVZh2Ji4Zr6ohOhB0YDirt3NjkuxVTJs4sP6GkXuQ4hU6F99Dfng/exec";
 
 // 통합 / 네이버 / 카카오 데이터
 let totalItems = [];   // 통합 시트 (통합용)
@@ -415,7 +415,7 @@ async function openDetailLayer({ title, author, platform }) {
     const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
     const data = await res.json(); // [{날짜, 오늘순위, 오늘조회수}, ...]
 
-    const labels = data.map((d) => d["날짜"].slice(5));
+        const labels = data.map((d) => d["날짜"].slice(5));
     const views = data.map((d) => parseViews(d["오늘조회수"]));
     const ranks = data.map((d) => Number(d["오늘순위"]));
 
@@ -424,45 +424,93 @@ async function openDetailLayer({ title, author, platform }) {
       detailChart.destroy();
     }
 
+    // 조회수 숫자를 만/억 단위로 찍는 포맷터
+    function formatViews(v) {
+      if (v >= 100000000) {
+        return (v / 100000000).toFixed(1).replace(/\.0$/, "") + "억";
+      } else if (v >= 10000) {
+        return (v / 10000).toFixed(1).replace(/\.0$/, "") + "만";
+      } else {
+        return v.toString();
+      }
+    }
+
     detailChart = new Chart(canvas, {
-      type: "line",
       data: {
         labels,
         datasets: [
+          // 조회수: 막대
           {
+            type: "bar",
             label: "조회수",
             data: views,
-            borderColor: "#007bff",
-            backgroundColor: "rgba(0,123,255,0.1)",
             yAxisID: "yViews",
+            backgroundColor: "rgba(33,150,243,0.45)",
+            borderColor: "rgba(33,150,243,0.9)",
+            borderWidth: 1,
+            borderRadius: 3,
+            maxBarThickness: 32,
           },
+          // 순위: 선
           {
+            type: "line",
             label: "순위",
             data: ranks,
-            borderColor: "#ff5c5c",
-            backgroundColor: "rgba(255,92,92,0.1)",
             yAxisID: "yRank",
+            borderColor: "rgba(244,67,54,0.9)",
+            backgroundColor: "rgba(244,67,54,0.05)",
+            borderWidth: 2,
+            tension: 0.15,
+            pointRadius: 3,
+            pointHoverRadius: 4,
+            pointBackgroundColor: "rgba(244,67,54,1)",
           },
         ],
       },
       options: {
         responsive: true,
         interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { position: "top" },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                const y = ctx.parsed.y;
+                if (ctx.dataset.yAxisID === "yViews") {
+                  return " 조회수: " + formatViews(y);
+                } else {
+                  return " 순위: " + y + "위";
+                }
+              },
+            },
+          },
+        },
         scales: {
+          x: {
+            title: { display: true, text: "날짜" },
+            ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 7 },
+          },
           yViews: {
             type: "linear",
             position: "left",
             title: { display: true, text: "조회수" },
+            ticks: {
+              callback: (value) => formatViews(value),
+            },
+            grid: { color: "rgba(0,0,0,0.05)" },
           },
           yRank: {
             type: "linear",
             position: "right",
-            reverse: true,
+            reverse: true, // 1위가 위로
             title: { display: true, text: "순위" },
+            grid: { drawOnChartArea: false },
+            ticks: { stepSize: 1, min: 1, max: 20 },
           },
         },
       },
     });
+
   } catch (e) {
     console.error("detail fetch error", e);
   }

@@ -1,7 +1,7 @@
 // =======================
 // 설정(필수): Apps Script URL
 // =======================
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwinNW_MInomUhSwYBaYX5Aa4yO7X8zwwO7vaYF2CjoG744e9KplkKymjIzq8ibmmxIqA/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweLhJzOy09IWY63OAqwMVjNmYySqiJPSl1LCU34bhVIiBoc89jipWnkxNAg353NNbw6A/exec";
 
 // 통합 / 네이버 / 카카오 데이터
 let totalItems = [];   // 통합 시트 (통합용)

@@ -45,6 +45,34 @@ function rankToScore(rank) {
 }
 
 // =======================
+// 통합 전일 정보 맵 (출처+제목 → 전일 정보)
+// =======================
+// totalItems 헤더: ["출처","오늘순위","제목","작가","날짜","장르","오늘조회수",
+//                  "전일순위","전일조회수","순위변화","조회수증감","조회수증감률","썸네일"]
+function buildPrevInfoMap(items) {
+  const map = new Map();
+
+  items.forEach((it) => {
+    let sourceRaw = String(it["출처"] || "").trim();   // 예: "네이버", "카카오", "카카오페이지"
+    const title = String(it["제목"] || "").trim();
+    if (!sourceRaw || !title) return;
+
+    // 출처 정규화 (통합 시트 값에 맞춰 필요하면 추가)
+    if (sourceRaw === "카카오페이지") sourceRaw = "카카오";
+
+    const key = `${sourceRaw}|${title}`;
+
+    map.set(key, {
+      prevRank: it["전일순위"] ?? "",
+      rankDiff: it["순위변화"] ?? "-",
+      viewRate: it["조회수증감률"] ?? "",
+    });
+  });
+
+  return map;
+}
+
+// =======================
 // 통합 랭킹 계산 (하단 통합 + 상단 전체 기반)
 // =======================
 // totalItems (통합 시트 JSON) 기준
@@ -102,16 +130,34 @@ function buildDailyTop10FromCombined() {
 // 네이버/카카오 원본에서 플랫폼별 TOP10 생성
 // rawList: 네이버 또는 카카오 시트 JSON
 // 구조: ["날짜","출처","순위","제목","작가","장르","조회수","썸네일"]
-function buildPlatformTop10(rawList) {
+// sourceLabel: "네이버" 또는 "카카오" (통합 시트의 출처 값 기준)
+// prevInfoMap: buildPrevInfoMap(totalItems) 결과
+function buildPlatformTop10(rawList, sourceLabel, prevInfoMap) {
   const sorted = [...rawList].sort(
     (a, b) => Number(a["순위"] || 0) - Number(b["순위"] || 0)
   );
-  return sorted.slice(0, 10).map((it, idx) => ({
-    ...it,
-    _localRank: idx + 1,             // 1~10
-    _viewsNum: parseViews(it["조회수"])
-  }));
+
+  return sorted.slice(0, 10).map((it, idx) => {
+    const title = String(it["제목"] || "").trim();
+    const key = `${sourceLabel}|${title}`;
+
+    const prevInfo = prevInfoMap.get(key) || {
+      prevRank: "",
+      rankDiff: "-",
+      viewRate: "",
+    };
+
+    return {
+      ...it,
+      _localRank: idx + 1,               // 1~10
+      _viewsNum: parseViews(it["조회수"]),
+      _prevRank: prevInfo.prevRank,
+      _rankDiff: prevInfo.rankDiff,
+      _viewRate: prevInfo.viewRate,
+    };
+  });
 }
+
 
 // 상단: 일별 박스오피스 테이블 렌더링
 function renderDailyTable() {
@@ -123,20 +169,23 @@ function renderDailyTable() {
 
   let top10 = [];
 
+  // 통합 전일 정보 맵 (출처+제목 기준)
+  const prevInfoMap = buildPrevInfoMap(totalItems);
+
   if (sourceFilter === "all") {
     // 상단 전체: 하단 통합 탭과 같은 통합 랭킹 기준 TOP10
     top10 = buildDailyTop10FromCombined();
   } else if (sourceFilter === "naver") {
-    // 상단 네이버: 네이버 원본 TOP20에서 1~10
-    top10 = buildPlatformTop10(naverRaw);
+    // 네이버: 네이버 원본 TOP20에서 1~10 + 통합 시트 전일 정보
+    top10 = buildPlatformTop10(naverRaw, "네이버", prevInfoMap);
   } else if (sourceFilter === "kakao") {
-    // 상단 카카오: 카카오 원본 TOP20에서 1~10
-    top10 = buildPlatformTop10(kakaoRaw);
+    // 카카오: 카카오 원본 TOP20에서 1~10 + 통합 시트 전일 정보
+    top10 = buildPlatformTop10(kakaoRaw, "카카오", prevInfoMap);
   }
 
   tbody.innerHTML = "";
 
-    top10.forEach((item) => {
+  top10.forEach((item) => {
     const tr = document.createElement("tr");
 
     let platformLabel = "";
@@ -157,17 +206,16 @@ function renderDailyTable() {
       viewRate = item["조회수증감률"] || "";
       thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
     } else {
-      // 원본 시트 기반 (네이버 / 카카오)
+      // 네이버/카카오 원본 + 통합 시트 전일 정보
       platformLabel = sourceFilter === "naver" ? "네이버" : "카카오";
       todayRank = item._localRank ?? item["순위"] ?? "";
-      prevRank = "-"; // 원본 시트에는 전일 데이터 없음
-      rankDiff = "-";
+      prevRank = item._prevRank || "-";
+      rankDiff = item._rankDiff || "-";
       todayViews = item["조회수"] || "-";
-      viewRate = "";
+      viewRate = item._viewRate || "";
       thumbUrl = item["썸네일"] && String(item["썸네일"]).trim();
     }
 
-    // 순위변화 색/텍스트
     function renderRankDiff(rankDiff) {
       if (!rankDiff || rankDiff === "-") return "-";
       if (rankDiff === "유지") {
@@ -185,7 +233,6 @@ function renderDailyTable() {
       return rankDiff;
     }
 
-    // 전일대비: 증감률만, + 빨강 / - 파랑 / NEW 노랑
     function renderChangeCell(viewRate) {
       if (!viewRate) return "-";
       if (viewRate === "NEW") {
@@ -234,8 +281,6 @@ function renderDailyTable() {
     tbody.appendChild(tr);
   });
 
-
-  // 제목 클릭 → 상세 레이어 열기
   document.querySelectorAll(".title-cell").forEach((td) => {
     td.addEventListener("click", () => {
       const title = td.dataset.title;
@@ -245,6 +290,7 @@ function renderDailyTable() {
     });
   });
 }
+
 
 // =======================
 // 하단 카드 영역

@@ -914,3 +914,20 @@ h1 {
   font-weight: 700;
 }
 
+.card-footer {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.card-footer-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-footer-left,
+.card-footer-right {
+  white-space: nowrap;
+}
+

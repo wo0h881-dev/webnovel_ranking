@@ -291,6 +291,33 @@ function renderDailyTable() {
   });
 }
 
+// 네이버/카카오 원본 TOP20 → 하단 카드용 리스트 생성
+// sourceLabel: "네이버" / "카카오"
+function buildPlatformCards(rawList, sourceLabel, prevInfoMap) {
+  const sorted = [...rawList].sort(
+    (a, b) => Number(a["순위"] || 0) - Number(b["순위"] || 0)
+  );
+
+  return sorted.slice(0, 20).map((it, idx) => {
+    const title = String(it["제목"] || "").trim();
+    const key = `${sourceLabel}|${title}`;
+
+    const prevInfo = prevInfoMap.get(key) || {
+      prevRank: "",
+      rankDiff: "-",
+      viewRate: "",
+    };
+
+    return {
+      ...it,
+      _localRank: idx + 1,               // 1~20
+      _viewsNum: parseViews(it["조회수"]),
+      _prevRank: prevInfo.prevRank,
+      _rankDiff: prevInfo.rankDiff,
+      _viewRate: prevInfo.viewRate,
+    };
+  });
+}
 
 // =======================
 // 하단 카드 영역
@@ -312,30 +339,65 @@ function createCard(item, rank) {
 
   const todayRank = item._platformRank ?? item["오늘순위"] ?? "";
   const prevRank = item["전일순위"] ?? "";
-  const rankDiff = item["순위변화"] || "-";
+  const rankDiffText = item["순위변화"] || "";
   const todayViews = item["오늘조회수"] || "-";
-  const viewRate = item["조회수증감률"] || "";
+  const viewRateRaw = item["조회수증감률"] || "";
 
-  function formatRankLine() {
-    // 예: "카카오 오늘 1위 (유지)" 또는 "카카오 오늘 1위 (NEW)"
-    if (!prevRank || prevRank === "NEW") {
-      return `${platformLabel} 오늘 ${todayRank}위 (NEW)`;
+  function getStatusHtml() {
+    let label = "";
+    let cls = "";
+
+    if (rankDiffText === "NEW") {
+      label = "NEW";
+      cls = "rank-diff rank-diff--new";
+    } else if (rankDiffText === "재진입") {
+      label = "재진입";
+      cls = "rank-diff rank-diff--new";
+    } else if (rankDiffText === "유지" || !rankDiffText) {
+      label = "유지";
+      cls = "rank-diff rank-diff--same";
+    } else if (String(rankDiffText).startsWith("▲")) {
+      label = rankDiffText;
+      cls = "rank-diff rank-diff--up";
+    } else if (String(rankDiffText).startsWith("▼")) {
+      label = rankDiffText;
+      cls = "rank-diff rank-diff--down";
+    } else {
+      label = rankDiffText;
+      cls = "rank-diff";
     }
-    return `${platformLabel} 오늘 ${todayRank}위 (${rankDiff})`;
+
+    return `<span class="${cls}">${label}</span>`;
   }
 
-  function formatChangeLine() {
-    // 예: "누적 조회수 3.5억 · 전일대비 +50.80%"
-    if (!viewRate || viewRate === "NEW") {
-      return `누적 조회수 ${todayViews}`;
+  function getRateHtml() {
+    if (!viewRateRaw || viewRateRaw === "NEW") {
+      return `<span class="change change--zero">0%</span>`;
     }
-    const num = parseFloat(String(viewRate).replace("%", ""));
+    const num = parseFloat(String(viewRateRaw).replace("%", ""));
     if (isNaN(num) || num === 0) {
-      return `누적 조회수 ${todayViews} · 전일대비 0%`;
+      return `<span class="change change--zero">0%</span>`;
     }
-    const sign = num > 0 ? "+" : "";
-    return `누적 조회수 ${todayViews} · 전일대비 ${sign}${num.toFixed(2)}%`;
+    if (num > 0) {
+      return `<span class="change change--up">+${num.toFixed(2)}%</span>`;
+    } else {
+      return `<span class="change change--down">${num.toFixed(2)}%</span>`;
+    }
   }
+
+  const line1Html = `
+    <div class="card-footer-line">
+      <span class="card-footer-left">${platformLabel} 오늘 ${todayRank}위</span>
+      <span class="card-footer-right">${getStatusHtml()}</span>
+    </div>
+  `;
+
+  const line2Html = `
+    <div class="card-footer-line">
+      <span class="card-footer-left">조회수 ${todayViews}</span>
+      <span class="card-footer-right">${getRateHtml()}</span>
+    </div>
+  `;
 
   div.innerHTML = `
     <div class="card-rank">${rank}</div>
@@ -349,8 +411,8 @@ function createCard(item, rank) {
         <span class="badge">${item["날짜"] || ""}</span>
       </div>
       <div class="card-footer">
-        ${formatRankLine()}<br />
-        ${formatChangeLine()}
+        ${line1Html}
+        ${line2Html}
       </div>
     </div>
   `;
@@ -359,7 +421,7 @@ function createCard(item, rank) {
 }
 
 
-// 하단 네이버/카카오 카드용 DOM (원본 TOP20)
+// 하단 네이버/카카오 카드용 DOM (원본 TOP20 + 통합 전일 정보)
 function createRawCard(item, rank, platform) {
   const div = document.createElement("div");
   div.className = "card";
@@ -373,8 +435,67 @@ function createRawCard(item, rank, platform) {
     ? `<img src="${thumbUrl}" alt="">`
     : `<span>썸네일 없음</span>`;
 
-  const todayRank = rank;
+  const todayRank = item._localRank ?? rank;
   const todayViews = item["조회수"] || "-";
+
+  const rankDiffText = item._rankDiff || "";   // 통합에서 가져온 순위변화
+  const viewRateRaw  = item._viewRate || "";   // 통합에서 가져온 증감률
+
+  function getStatusHtml() {
+    let label = "";
+    let cls = "";
+
+    if (rankDiffText === "NEW") {
+      label = "NEW";
+      cls = "rank-diff rank-diff--new";
+    } else if (rankDiffText === "재진입") {
+      label = "재진입";
+      cls = "rank-diff rank-diff--new";
+    } else if (rankDiffText === "유지" || !rankDiffText) {
+      label = "유지";
+      cls = "rank-diff rank-diff--same";
+    } else if (String(rankDiffText).startsWith("▲")) {
+      label = rankDiffText;
+      cls = "rank-diff rank-diff--up";
+    } else if (String(rankDiffText).startsWith("▼")) {
+      label = rankDiffText;
+      cls = "rank-diff rank-diff--down";
+    } else {
+      label = rankDiffText;
+      cls = "rank-diff";
+    }
+
+    return `<span class="${cls}">${label}</span>`;
+  }
+
+  function getRateHtml() {
+    if (!viewRateRaw || viewRateRaw === "NEW") {
+      return `<span class="change change--zero">0%</span>`;
+    }
+    const num = parseFloat(String(viewRateRaw).replace("%", ""));
+    if (isNaN(num) || num === 0) {
+      return `<span class="change change--zero">0%</span>`;
+    }
+    if (num > 0) {
+      return `<span class="change change--up">+${num.toFixed(2)}%</span>`;
+    } else {
+      return `<span class="change change--down">${num.toFixed(2)}%</span>`;
+    }
+  }
+
+  const line1Html = `
+    <div class="card-footer-line">
+      <span class="card-footer-left">${platformLabel} 오늘 ${todayRank}위</span>
+      <span class="card-footer-right">${getStatusHtml()}</span>
+    </div>
+  `;
+
+  const line2Html = `
+    <div class="card-footer-line">
+      <span class="card-footer-left">조회수 ${todayViews}</span>
+      <span class="card-footer-right">${getRateHtml()}</span>
+    </div>
+  `;
 
   div.innerHTML = `
     <div class="card-rank">${rank}</div>
@@ -388,13 +509,15 @@ function createRawCard(item, rank, platform) {
         <span class="badge">${item["날짜"] || ""}</span>
       </div>
       <div class="card-footer">
-        ${platformLabel} 오늘 ${todayRank}위 · 조회수 ${todayViews}
+        ${line1Html}
+        ${line2Html}
       </div>
     </div>
   `;
 
   return div;
 }
+
 
 // 하단 카드 렌더링
 // filter: all / naver / kakao
@@ -404,6 +527,9 @@ function renderCards(filter) {
 
   grid.innerHTML = "";
 
+  // 통합 전일 정보 맵
+  const prevInfoMap = buildPrevInfoMap(totalItems);
+
   if (filter === "all") {
     // 통합 TOP40 그대로 (_combinedRank 기준)
     combinedItems.forEach((item) => {
@@ -411,25 +537,22 @@ function renderCards(filter) {
       grid.appendChild(card);
     });
   } else if (filter === "naver") {
-    // 네이버 원본 TOP20 → 1~20
-    const sorted = [...naverRaw].sort(
-      (a, b) => Number(a["순위"] || 0) - Number(b["순위"] || 0)
-    );
-    sorted.slice(0, 20).forEach((item, idx) => {
+    // 네이버 원본 TOP20 + 통합 전일 정보
+    const list = buildPlatformCards(naverRaw, "네이버", prevInfoMap);
+    list.forEach((item, idx) => {
       const card = createRawCard(item, idx + 1, "naver");
       grid.appendChild(card);
     });
   } else if (filter === "kakao") {
-    // 카카오 원본 TOP20 → 1~20
-    const sorted = [...kakaoRaw].sort(
-      (a, b) => Number(a["순위"] || 0) - Number(b["순위"] || 0)
-    );
-    sorted.slice(0, 20).forEach((item, idx) => {
+    // 카카오 원본 TOP20 + 통합 전일 정보
+    const list = buildPlatformCards(kakaoRaw, "카카오", prevInfoMap);
+    list.forEach((item, idx) => {
       const card = createRawCard(item, idx + 1, "kakao");
       grid.appendChild(card);
     });
   }
 }
+
 
 // =======================
 // 상세 레이어 (KOBIS 스타일)
